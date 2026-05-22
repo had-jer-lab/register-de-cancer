@@ -1,0 +1,257 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1601",
+        "name": "Alger Centre",
+        "wilaya_code": "16",
+        "wilaya_name": "Alger",
+        "cases": 125000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.05, 36.75], [3.08, 36.75], [3.08, 36.72], [3.05, 36.72], [3.05, 36.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1602",
+        "name": "Sidi M'Hamed",
+        "wilaya_code": "16",
+        "wilaya_name": "Alger",
+        "cases": 87000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.08, 36.75], [3.12, 36.75], [3.12, 36.72], [3.08, 36.72], [3.08, 36.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1603",
+        "name": "Ben Aknoun",
+        "wilaya_code": "16",
+        "wilaya_name": "Alger",
+        "cases": 45000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.00, 36.75], [3.05, 36.75], [3.05, 36.78], [3.00, 36.78], [3.00, 36.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "2501",
+        "name": "Constantine Centre",
+        "wilaya_code": "25",
+        "wilaya_name": "Constantine",
+        "cases": 156000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.60, 36.35], [6.65, 36.35], [6.65, 36.32], [6.60, 36.32], [6.60, 36.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "2502",
+        "name": "En Nasr",
+        "wilaya_code": "25",
+        "wilaya_name": "Constantine",
+        "cases": 98000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.65, 36.35], [6.70, 36.35], [6.70, 36.32], [6.65, 36.32], [6.65, 36.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "2503",
+        "name": "Zighoud Youcef",
+        "wilaya_code": "25",
+        "wilaya_name": "Constantine",
+        "cases": 67000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.55, 36.35], [6.60, 36.35], [6.60, 36.32], [6.55, 36.32], [6.55, 36.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "3101",
+        "name": "Oran Centre",
+        "wilaya_code": "31",
+        "wilaya_name": "Oran",
+        "cases": 142000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.63, 35.73], [-0.60, 35.73], [-0.60, 35.70], [-0.63, 35.70], [-0.63, 35.73]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "3102",
+        "name": "Bir El Djir",
+        "wilaya_code": "31",
+        "wilaya_name": "Oran",
+        "cases": 89000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.60, 35.73], [-0.57, 35.73], [-0.57, 35.70], [-0.60, 35.70], [-0.60, 35.73]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "3103",
+        "name": "Sidi Djillali",
+        "wilaya_code": "31",
+        "wilaya_name": "Oran",
+        "cases": 56000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.63, 35.70], [-0.60, 35.70], [-0.60, 35.67], [-0.63, 35.67], [-0.63, 35.70]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1101",
+        "name": "Tizi Ouzou Centre",
+        "wilaya_code": "11",
+        "wilaya_name": "Tizi Ouzou",
+        "cases": 95000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4.03, 36.73], [4.08, 36.73], [4.08, 36.70], [4.03, 36.70], [4.03, 36.73]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1102",
+        "name": "Draâ El Mizan",
+        "wilaya_code": "11",
+        "wilaya_name": "Tizi Ouzou",
+        "cases": 67000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4.08, 36.73], [4.13, 36.73], [4.13, 36.70], [4.08, 36.70], [4.08, 36.73]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1103",
+        "name": "Azazga",
+        "wilaya_code": "11",
+        "wilaya_name": "Tizi Ouzou",
+        "cases": 45000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.98, 36.73], [4.03, 36.73], [4.03, 36.70], [3.98, 36.70], [3.98, 36.73]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1901",
+        "name": "Sétif Centre",
+        "wilaya_code": "19",
+        "wilaya_name": "Sétif",
+        "cases": 108000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.40, 36.19], [5.45, 36.19], [5.45, 36.16], [5.40, 36.16], [5.40, 36.19]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1902",
+        "name": "Ain Azel",
+        "wilaya_code": "19",
+        "wilaya_name": "Sétif",
+        "cases": 72000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.45, 36.19], [5.50, 36.19], [5.50, 36.16], [5.45, 36.16], [5.45, 36.19]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1903",
+        "name": "Béni Ourtilane",
+        "wilaya_code": "19",
+        "wilaya_name": "Sétif",
+        "cases": 54000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.35, 36.19], [5.40, 36.19], [5.40, 36.16], [5.35, 36.16], [5.35, 36.19]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "0601",
+        "name": "Béjaïa Centre",
+        "wilaya_code": "06",
+        "wilaya_name": "Béjaïa",
+        "cases": 78000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.08, 36.75], [5.13, 36.75], [5.13, 36.72], [5.08, 36.72], [5.08, 36.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "0602",
+        "name": "Amizour",
+        "wilaya_code": "06",
+        "wilaya_name": "Béjaïa",
+        "cases": 52000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.13, 36.75], [5.18, 36.75], [5.18, 36.72], [5.13, 36.72], [5.13, 36.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "0603",
+        "name": "Sidi Aïch",
+        "wilaya_code": "06",
+        "wilaya_name": "Béjaïa",
+        "cases": 68000
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.03, 36.75], [5.08, 36.75], [5.08, 36.72], [5.03, 36.72], [5.03, 36.75]]]
+      }
+    }
+  ]
+}

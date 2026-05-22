@@ -23,6 +23,8 @@ class Commune(models.Model):
     name        = models.CharField(max_length=100)
     wilaya      = models.ForeignKey(Wilaya, on_delete=models.CASCADE, related_name='communes')
     postal_code = models.CharField(max_length=10, blank=True)
+    latitude    = models.FloatField(null=True, blank=True)
+    longitude   = models.FloatField(null=True, blank=True)
 
     class Meta:
         ordering = ['name']

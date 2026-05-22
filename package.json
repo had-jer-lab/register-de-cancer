@@ -1,0 +1,10 @@
+{
+  "name": "cancer-registry",
+  "version": "1.0.0",
+  "description": "Cancer Registry System",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}

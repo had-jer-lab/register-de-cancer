@@ -1,0 +1,57 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Adrar",
+        "NAME": "Adrar"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.5, 26.0], [-0.5, 28.0], [1.5, 28.0], [1.5, 26.0], [-0.5, 26.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Chlef",
+        "NAME": "Chlef"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [1.0, 36.0], [1.0, 36.5], [1.5, 36.5], [1.5, 36.0], [1.0, 36.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Alger",
+        "NAME": "Alger"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.9, 36.7], [2.9, 36.9], [3.1, 36.9], [3.1, 36.7], [2.9, 36.7]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tlemcen",
+        "NAME": "Tlemcen"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-1.4, 34.8], [-1.4, 35.0], [-1.2, 35.0], [-1.2, 34.8], [-1.4, 34.8]
+        ]]
+      }
+    }
+  ]
+}

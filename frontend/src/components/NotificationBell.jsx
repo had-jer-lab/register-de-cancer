@@ -27,7 +27,7 @@ export default function NotificationBell() {
     if (!token) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API}/patients/notifications/`, {
+      const res = await fetch(`${API}/notifications/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) setNotifs(await res.json());
@@ -55,7 +55,7 @@ export default function NotificationBell() {
     // 1. Marquer comme lu
     if (!notif.is_read) {
       try {
-        await fetch(`${API}/patients/notifications/${notif.id}/read/`, {
+        await fetch(`${API}/notifications/${notif.id}/read/`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -76,7 +76,7 @@ export default function NotificationBell() {
     const unreadNotifs = notifs.filter(n => !n.is_read);
     await Promise.all(
       unreadNotifs.map(n =>
-        fetch(`${API}/patients/notifications/${n.id}/read/`, {
+        fetch(`${API}/notifications/${n.id}/read/`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         }).catch(() => {})

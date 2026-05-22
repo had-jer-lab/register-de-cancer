@@ -1,0 +1,569 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "16",
+        "wilaya_name": "Alger",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2.95, 36.85], [3.25, 36.85], [3.25, 36.65], [2.95, 36.65], [2.95, 36.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "35",
+        "wilaya_name": "Boumerdès",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.25, 36.85], [3.6, 36.85], [3.6, 36.65], [3.25, 36.65], [3.25, 36.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "42",
+        "wilaya_name": "Tipaza",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2.3, 36.65], [2.85, 36.65], [2.85, 36.4], [2.3, 36.4], [2.3, 36.65]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "26",
+        "wilaya_name": "Médéa",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2.4, 36.35], [3.1, 36.35], [3.1, 36.0], [2.4, 36.0], [2.4, 36.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "44",
+        "wilaya_name": "Aïn Defla",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[1.6, 36.35], [2.35, 36.35], [2.35, 36.0], [1.6, 36.0], [1.6, 36.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "09",
+        "wilaya_name": "Blida",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2.8, 36.5], [3.2, 36.5], [3.2, 36.2], [2.8, 36.2], [2.8, 36.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "15",
+        "wilaya_name": "Tizi Ouzou",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.6, 36.85], [4.3, 36.85], [4.3, 36.5], [3.6, 36.5], [3.6, 36.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "06",
+        "wilaya_name": "Béjaïa",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4.3, 36.85], [5.2, 36.85], [5.2, 36.5], [4.3, 36.5], [4.3, 36.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "10",
+        "wilaya_name": "Bouira",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.8, 36.5], [4.3, 36.5], [4.3, 36.1], [3.8, 36.1], [3.8, 36.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "19",
+        "wilaya_name": "Sétif",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4.9, 36.5], [5.7, 36.5], [5.7, 36.0], [4.9, 36.0], [4.9, 36.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "25",
+        "wilaya_name": "Constantine",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.0, 36.6], [7.0, 36.6], [7.0, 36.0], [6.0, 36.0], [6.0, 36.6]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "43",
+        "wilaya_name": "Mila",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.9, 36.7], [6.6, 36.7], [6.6, 36.2], [5.9, 36.2], [5.9, 36.7]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "18",
+        "wilaya_name": "Jijel",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.7, 36.85], [6.5, 36.85], [6.5, 36.6], [5.7, 36.6], [5.7, 36.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "21",
+        "wilaya_name": "Skikda",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.5, 36.9], [7.3, 36.9], [7.3, 36.7], [6.5, 36.7], [6.5, 36.9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "23",
+        "wilaya_name": "Annaba",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.3, 36.95], [8.2, 36.95], [8.2, 36.75], [7.3, 36.75], [7.3, 36.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "36",
+        "wilaya_name": "El Tarf",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[8.1, 36.9], [8.5, 36.9], [8.5, 36.6], [8.1, 36.6], [8.1, 36.9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "24",
+        "wilaya_name": "Guelma",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.0, 36.6], [7.7, 36.6], [7.7, 36.2], [7.0, 36.2], [7.0, 36.6]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "41",
+        "wilaya_name": "Souk Ahras",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.5, 36.0], [8.3, 36.0], [8.3, 35.6], [7.5, 35.6], [7.5, 36.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "12",
+        "wilaya_name": "Tébessa",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.6, 35.4], [8.6, 35.4], [8.6, 34.9], [7.6, 34.9], [7.6, 35.4]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "04",
+        "wilaya_name": "Oum El Bouaghi",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.9, 35.9], [7.6, 35.9], [7.6, 35.7], [6.9, 35.7], [6.9, 35.9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "05",
+        "wilaya_name": "Batna",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.5, 35.8], [6.6, 35.8], [6.6, 35.2], [5.5, 35.2], [5.5, 35.8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "28",
+        "wilaya_name": "M'Sila",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4.2, 35.9], [5.2, 35.9], [5.2, 35.4], [4.2, 35.4], [4.2, 35.9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "34",
+        "wilaya_name": "Bordj Bou Arréridj",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4.6, 35.8], [5.3, 35.8], [5.3, 35.5], [4.6, 35.5], [4.6, 35.8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "03",
+        "wilaya_name": "Laghouat",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2.5, 33.8], [3.5, 33.8], [3.5, 33.3], [2.5, 33.3], [2.5, 33.8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "17",
+        "wilaya_name": "Djelfa",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.0, 34.7], [4.0, 34.7], [4.0, 34.2], [3.0, 34.2], [3.0, 34.7]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "02",
+        "wilaya_name": "Chlef",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[1.0, 36.3], [1.8, 36.3], [1.8, 36.0], [1.0, 36.0], [1.0, 36.3]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "27",
+        "wilaya_name": "Mostaganem",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0.1, 35.95], [0.8, 35.95], [0.8, 35.7], [0.1, 35.7], [0.1, 35.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "31",
+        "wilaya_name": "Oran",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-1.0, 35.85], [-0.3, 35.85], [-0.3, 35.5], [-1.0, 35.5], [-1.0, 35.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "13",
+        "wilaya_name": "Tlemcen",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-1.6, 34.95], [-0.9, 34.95], [-0.9, 34.6], [-1.6, 34.6], [-1.6, 34.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "22",
+        "wilaya_name": "Sidi Bel Abbès",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-1.0, 35.2], [-0.3, 35.2], [-0.3, 34.9], [-1.0, 34.9], [-1.0, 35.2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "29",
+        "wilaya_name": "Mascara",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-0.7, 35.4], [-0.1, 35.4], [-0.1, 35.0], [-0.7, 35.0], [-0.7, 35.4]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "20",
+        "wilaya_name": "Saïda",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-0.3, 34.9], [0.5, 34.9], [0.5, 34.5], [-0.3, 34.5], [-0.3, 34.9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "14",
+        "wilaya_name": "Tiaret",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0.6, 35.4], [1.6, 35.4], [1.6, 34.9], [0.6, 34.9], [0.6, 35.4]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "38",
+        "wilaya_name": "Tissemsilt",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[1.5, 35.8], [2.2, 35.8], [2.2, 35.5], [1.5, 35.5], [1.5, 35.8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "46",
+        "wilaya_name": "Aïn Témouchent",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-1.5, 35.3], [-0.8, 35.3], [-0.8, 35.0], [-1.5, 35.0], [-1.5, 35.3]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "07",
+        "wilaya_name": "Biskra",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.3, 34.9], [6.2, 34.9], [6.2, 34.4], [5.3, 34.4], [5.3, 34.9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "40",
+        "wilaya_name": "Khenchela",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.8, 34.7], [7.5, 34.7], [7.5, 34.3], [6.8, 34.3], [6.8, 34.7]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "39",
+        "wilaya_name": "El Oued",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.0, 33.5], [7.0, 33.5], [7.0, 33.0], [6.0, 33.0], [6.0, 33.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "30",
+        "wilaya_name": "Ouargla",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4.9, 32.0], [5.9, 32.0], [5.9, 31.6], [4.9, 31.6], [4.9, 32.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "47",
+        "wilaya_name": "Ghardaïa",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.5, 32.7], [4.5, 32.7], [4.5, 32.0], [3.5, 32.0], [3.5, 32.7]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "45",
+        "wilaya_name": "Naâma",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0.0, 33.9], [1.0, 33.9], [1.0, 33.4], [0.0, 33.4], [0.0, 33.9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "32",
+        "wilaya_name": "El Bayadh",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0.5, 33.7], [1.4, 33.7], [1.4, 33.3], [0.5, 33.3], [0.5, 33.7]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "01",
+        "wilaya_name": "Adrar",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-1.0, 27.9], [0.5, 27.9], [0.5, 27.3], [-1.0, 27.3], [-1.0, 27.9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "08",
+        "wilaya_name": "Béchar",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-2.8, 31.6], [-1.8, 31.6], [-1.8, 31.0], [-2.8, 31.0], [-2.8, 31.6]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "37",
+        "wilaya_name": "Tindouf",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[-8.5, 27.7], [-7.5, 27.7], [-7.5, 27.3], [-8.5, 27.3], [-8.5, 27.7]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "11",
+        "wilaya_name": "Tamanrasset",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4.5, 23.0], [6.5, 23.0], [6.5, 22.0], [4.5, 22.0], [4.5, 23.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya_code": "33",
+        "wilaya_name": "Illizi",
+        "cases": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.5, 27.0], [9.0, 27.0], [9.0, 26.2], [7.5, 26.2], [7.5, 27.0]]]
+      }
+    }
+  ]
+}

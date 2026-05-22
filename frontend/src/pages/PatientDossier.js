@@ -5,8 +5,7 @@ import PatientQRSection from '../components/PatientQRSection';
 import { MicButton } from '../components/MicButton';
 import CustomFieldsRenderer from '../components/CustomFieldsRenderer';
 
-const API = `http://${window.location.hostname}:8000/api`;
-
+const API = process.env.REACT_APP_API_URL || `http://${window.location.hostname}:8000/api`;
 async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('access_token');
   const res = await fetch(`${API}${path}`, {
@@ -17,7 +16,16 @@ async function apiFetch(path, options = {}) {
     ...options,
   });
   if (res.status === 401) { localStorage.clear(); window.location.href = '/auth'; return null; }
-  if (!res.ok) throw await res.json().catch(() => ({}));
+  if (!res.ok) {
+    try {
+      const errData = await res.json();
+      const err = new Error(errData.detail || errData.message || `Erreur HTTP ${res.status}`);
+      err.data = errData;
+      throw err;
+    } catch (e) {
+      throw new Error(`Erreur HTTP ${res.status}: ${res.statusText}`);
+    }
+  }
   if (res.status === 204) return null;
   return res.json();
 }

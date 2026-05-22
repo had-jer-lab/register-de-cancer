@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     # Apps
     'accounts',
     'patients',
+    'statistic',
     'django_filters',
     'rcp',
     'django_apscheduler',
@@ -65,26 +66,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Database configuration - use SQLite for development if USE_SQLITE is set
-if config('USE_SQLITE', default='True').lower() == 'true':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME':     config('DB_NAME', default='registre_cancer'),
-            'USER':     config('DB_USER', default='postgres'),
-            'PASSWORD': config('DB_PASSWORD', default='123'),
-            'HOST':     config('DB_HOST', default='localhost'),
-            'PORT':     config('DB_PORT', default='5432'),
-        }
-    }
-
+}
 AUTH_USER_MODEL = 'accounts.User'
 
 REST_FRAMEWORK = {
@@ -103,6 +90,22 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# Allow credentials and all headers for development
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True  # For development only
+CORS_ALLOWED_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
     "http://192.168.1.9:3000",
 ]
 
@@ -122,3 +125,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ✅ Media files — بعد BASE_DIR
+MEDIA_URL  = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
