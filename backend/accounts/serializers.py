@@ -27,7 +27,8 @@ class UserSerializer(serializers.ModelSerializer):
             'perm_stats':  {'write_only': False},
             'perm_import': {'write_only': False},
         }
-
+    def get_full_name(self, obj):
+        return f"{obj.prenom or ''} {obj.nom or ''}".strip() or obj.email
     def get_permissions(self, obj):
         return obj.permissions_list
 
