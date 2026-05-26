@@ -7,8 +7,7 @@ from django.shortcuts import redirect
 
 
 def patient_form_redirect(request, id):
-    host = request.get_host().split(':')[0]
-    return redirect(f'http://{host}:3000/patient-form/{id}')
+    return redirect(f'https://register-de-cancer-frontend.vercel.app/patient-form/{id}')
 
 
 urlpatterns = [
