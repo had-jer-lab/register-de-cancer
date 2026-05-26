@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'patients',
     'statistic',
     'rcp',
+    'corsheaders',
 ]
 
 # ─── MIDDLEWARE ──────────────────────────────────────────────────────────────
