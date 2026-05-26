@@ -107,8 +107,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True   # dev only — غير في production
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    'https://register-de-cancer-frontend.vercel.app',
+    'http://localhost:3000',
 ]
 
 CORS_ALLOWED_HEADERS = [
@@ -140,3 +140,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+ALLOWED_HOSTS = [
+    'register-de-cancer.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+
+
