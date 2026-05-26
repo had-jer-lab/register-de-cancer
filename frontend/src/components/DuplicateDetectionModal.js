@@ -437,7 +437,7 @@ export default function DuplicateDetectionModal({
             <span style={{ fontWeight: 800, color: TEXT, fontSize: 13 }}>Détails de Correspondance</span>
             {/* Badge total */}
             <span style={{ background: TC.light, color: TC.text, border: `1.5px solid ${TC.solid}44`, borderRadius: 20, padding: "3px 14px", fontSize: 13, fontWeight: 900, boxShadow: `2px 2px 6px ${TC.solid}22` }}>{totalSimilarity}%</span>
-            <span style={{ fontSize: 11, color: MUTED }}>(NIN×3, Nom×2, Date×2, Tél×2, Wilaya×1)</span>
+            <span style={{ fontSize: 11, color: MUTED }}>(NINأ—3, Nomأ—2, Dateأ—2, Télأ—2, Wilayaأ—1)</span>
           </div>
 
           {/* Grid */}
@@ -458,7 +458,7 @@ export default function DuplicateDetectionModal({
                       <span>{s.icon}</span> {s.champ}
                       {ninWarn && (
                         <span style={{ background: "#fef3c7", color: "#d97706", border: "1px solid #f59e0b55", borderRadius: 8, padding: "1px 6px", fontSize: 9, fontWeight: 800, letterSpacing: "0.3px" }}>
-                          ≠ DIFFÉRENTS
+                          ≠  DIFFÉRENTS
                         </span>
                       )}
                     </div>

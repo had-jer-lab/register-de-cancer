@@ -1,5 +1,6 @@
 // hooks/useWhisperInput.js
-// يسجل الصوت بـ MediaRecorder ويرسله لـ Django → Groq Whisper
+// ظٹط³ط¬ظ„ ط§ظ„طµظˆت ط¨ظ€ MediaRecorder ظˆظٹط±ط³ظ„ظ‡ ظ„ظ€ Django → Groq Whisper
+import { apiUrl } from '../utils/apiConfig';
 import { useState, useRef, useCallback } from 'react';
 
 export function useWhisperInput({ lang = 'ar', onResult, onError } = {}) {
@@ -19,7 +20,7 @@ export function useWhisperInput({ lang = 'ar', onResult, onError } = {}) {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      // نختار الصيغة المدعومة
+      // ظ†ختار ط§ظ„صيغة ط§ظ„ظ…ط¯ط¹ظˆظ…ة
       const mimeType = [
         'audio/webm;codecs=opus',
         'audio/webm',
@@ -35,7 +36,7 @@ export function useWhisperInput({ lang = 'ar', onResult, onError } = {}) {
       };
 
       recorder.onstop = async () => {
-        // إيقاف الميكروفون
+        // ط¥ظٹظ‚اف ط§ظ„ظ…ظٹظƒط±ظˆظپظˆظ†
         stream.getTracks().forEach(t => t.stop());
         streamRef.current = null;
 
@@ -53,7 +54,7 @@ export function useWhisperInput({ lang = 'ar', onResult, onError } = {}) {
           formData.append('audio', blob, `voice.${ext}`);
           formData.append('lang', lang);
 
-          const res = await fetch('http://localhost:8000/api/patients/whisper-parse/', {
+          const res = await fetch(apiUrl('/patients/whisper-parse/'), {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData,
@@ -64,19 +65,19 @@ export function useWhisperInput({ lang = 'ar', onResult, onError } = {}) {
 
           onResult?.(data);   // data = { fields, transcript }
         } catch (e) {
-          onError?.(e.message || 'خطأ في الاتصال');
+          onError?.(e.message || 'خطأ في ط§ظ„ط§طھطµط§ظ„');
         } finally {
           setLoading(false);
         }
       };
 
-      recorder.start(250); // chunk كل 250ms
+      recorder.start(250); // chunk ظƒظ„ 250ms
       setListening(true);
 
     } catch (e) {
       onError?.(e.message?.includes('Permission')
-        ? 'يرجى السماح بالوصول للميكروفون'
-        : e.message || 'خطأ في الميكروفون');
+        ? 'ظٹط±ط¬ظ‰ ط§ظ„ط³ظ…اح ط¨ط§ظ„ظˆطµظˆظ„ ظ„ظ„ظ…ظٹظƒط±ظˆظپظˆظ†'
+        : e.message || 'خطأ في ط§ظ„ظ…ظٹظƒط±ظˆظپظˆظ†');
     }
   }, [listening, loading, lang, onResult, onError]);
 
@@ -92,3 +93,4 @@ export function useWhisperInput({ lang = 'ar', onResult, onError } = {}) {
 
   return { listening, loading, supported, start, stop, toggle };
 }
+

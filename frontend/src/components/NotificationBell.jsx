@@ -10,7 +10,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const API = 'http://localhost:8000/api';
+import API_BASE from '../utils/apiConfig';
+
+const API = API_BASE;
 
 export default function NotificationBell() {
   const [notifs,  setNotifs]  = useState([]);
@@ -89,7 +91,7 @@ export default function NotificationBell() {
     const d    = new Date(iso);
     const now  = new Date();
     const diff = Math.floor((now - d) / 60000);
-    if (diff < 1)    return 'À l\'instant';
+    if (diff < 1)    return 'أ€ l\'instant';
     if (diff < 60)   return `il y a ${diff} min`;
     if (diff < 1440) return `il y a ${Math.floor(diff / 60)}h`;
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });

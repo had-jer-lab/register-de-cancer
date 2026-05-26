@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // ✅ useLocation ajouté
+import { useNavigate } from 'react-router-dom';
 import { usePatient } from '../context/PatientContext';
 import NotificationBell from '../components/NotificationBell';
 
@@ -45,6 +45,8 @@ const NAV_ITEMS = [
   { icon: '📊', label: 'Statistiques',     id: 'stats'     },
   { icon: '💬', label: 'Discussion RCP',   id: 'rcp'       },
   { icon: '📥', label: 'Import données',   id: 'import'    },
+  { icon: '📦', label: 'Archives',         id: 'archive'   }, // ← زيده هنا
+
 ];
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
@@ -109,17 +111,25 @@ export default function Dashboard() {
     setPage(1);
   };
 
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Supprimer le dossier de ${name} ?`)) return;
-    try {
-      await apiFetch(`/patients/${id}/`, { method: 'DELETE' });
-      setPatients(prev => prev.filter(p => p.id !== id));
-      setTotalCount(prev => prev - 1);
-      showToast(`✓ Dossier supprimé`);
-    } catch {
-      showToast('Erreur lors de la suppression');
-    }
-  };
+  const handleArchive = async (id, name) => {
+  if (!window.confirm(`Archiver le dossier de ${name} ?`)) return;
+  try {
+    // جيب بيانات المريض الكاملة
+    const patientData = patients.find(p => p.id === id);
+    
+    // خزنها في localStorage
+    const archives = JSON.parse(localStorage.getItem('archived_patients') || '[]');
+    archives.push({ ...patientData, archived_at: new Date().toISOString() });
+    localStorage.setItem('archived_patients', JSON.stringify(archives));
+    
+    // امسحه من العرض فقط (ماشي من DB)
+    setPatients(prev => prev.filter(p => p.id !== id));
+    setTotalCount(prev => prev - 1);
+    showToast(`📦 Dossier archivé`);
+  } catch {
+    showToast("Erreur lors de l'archivage");
+  }
+};
 
   const { reset } = usePatient();
 
@@ -131,6 +141,8 @@ export default function Dashboard() {
     setActiveNav(id);
     if (id === 'rcp')    navigate('/rcp');
     if (id === 'import') navigate('/import');
+      if (id === 'archive') navigate('/patient-archive'); // ← زيده هنا
+
   };
 
   // ── Logout ────────────────────────────────────────────────────────────────
@@ -366,11 +378,11 @@ export default function Dashboard() {
                             ✏
                           </button>
                           <button
-                            style={{ ...s.iconBtnEdit, color: '#FF6B6B', borderColor: 'rgba(255,107,107,0.3)' }}
-                            title="Supprimer"
-                            onClick={() => handleDelete(p.id, p.full_name)}>
-                            🗑
-                          </button>
+  style={{ ...s.iconBtnEdit, color: '#FFA26B', borderColor: 'rgba(255,162,107,0.3)' }}
+  title="Archiver"
+  onClick={() => handleArchive(p.id, p.full_name)}>
+  📦
+</button>
                         </div>
                       </td>
                     </tr>

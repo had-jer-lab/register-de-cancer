@@ -1,6 +1,7 @@
-﻿import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE from '../utils/apiConfig';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 // html2canvas et jsPDF chargés depuis CDN facultatif (évite erreur si node_modules non installé faute d'espace disque)
@@ -1253,7 +1254,7 @@ function ChoroplethMap({ data, apiData, rawData, cancers, patients }) {
   useEffect(() => {
     setMainApiLoading(true);
     const token = getAuthToken();
-    const urls = ['/api/statistic/stats/', 'http://localhost:8000/api/statistic/stats/'];
+    const urls = ['/api/statistic/stats/', `${API_BASE}/statistic/stats/`];
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     const fetchStats = async () => {
@@ -3976,7 +3977,7 @@ export default function StatBuilder() {
       return;
     }
 
-    const urls = ['/api/statistic/stats/', 'http://localhost:8000/api/statistic/stats/'];
+    const urls = ['/api/statistic/stats/', `${API_BASE}/statistic/stats/`];
     const headers = {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {})
@@ -4017,7 +4018,7 @@ export default function StatBuilder() {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const apiBase = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+        const apiBase = API_BASE;
         const token = getAuthToken();
         const response = await fetch(`${apiBase}/patients/`, {
           headers: token ? {
@@ -5440,7 +5441,7 @@ tr:nth-child(even) td{background:#f9fafb}
       </div>
 
       {/* BODY */}
-      <div style={{maxWidth:920,margin:"0 auto",padding:"16px 14px",overflowX:'auto'}}>
+      <div style={{maxWidth:'100%',width:'100%',margin:"0 auto",padding:"16px 14px",overflowX:'auto'}}>
 
         {apiLoading && (
           <div style={{textAlign:'center',padding:'20px',fontSize:13,color:'#94a3b8',display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
@@ -6786,3 +6787,5 @@ tr:nth-child(even) td{background:#f9fafb}
     </div>
   );
 }
+
+

@@ -1,4 +1,5 @@
 // components/VoiceFillPanel.jsx
+import { apiUrl } from '../utils/apiConfig';
 import React, { useState } from 'react';
 import { useWhisperInput } from '../hooks/useWhisperInput';
 
@@ -38,7 +39,7 @@ export function VoiceFillPanel({ onFill }) {
     setError('');
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch('http://localhost:8000/api/patients/voice-parse/', {
+      const res = await fetch(apiUrl('/patients/voice-parse/'), {
         method: 'POST',
         headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` },
         body: JSON.stringify({ transcript: text }),
@@ -180,3 +181,4 @@ const s = {
   reset:       { padding:'9px 14px', borderRadius:8, border:'1px solid #e2e8f0', background:'white', color:'#718096', fontSize:13, cursor:'pointer' },
   unsupported: { padding:12, background:'#FFF5F5', borderRadius:10, color:'#E53E3E', fontSize:13, marginBottom:16 },
 };
+

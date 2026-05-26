@@ -24,7 +24,7 @@ const SOUS_TYPES = {
   'Foie / Voies biliaires': ['Carcinome hépatocellulaire','Cholangiocarcinome','Angiosarcome','Hépatoblastome','Autre'],
   'Estomac':                ['Adénocarcinome intestinal','Adénocarcinome diffus','Lymphome MALT','Tumeur stromale (GIST)','Autre'],
   'Pancréas':               ['Adénocarcinome canalaire','Tumeur neuroendocrine','Cystadénocarcinome','Tumeur pseudopapillaire','Autre'],
-  'Ovaire':                 ['Séreux','Mucineux','Endométrioïde','À cellules claires','Tumeur germinale','Autre'],
+  'Ovaire':                 ['Séreux','Mucineux','Endométrioïde','أ€ cellules claires','Tumeur germinale','Autre'],
   'Rein':                   ['Carcinome à cellules claires','Carcinome papillaire','Carcinome chromophobe','Tumeur de Wilms','Autre'],
   'Vessie':                 ['Carcinome urothélial','Carcinome épidermoïde','Adénocarcinome','Carcinome à petites cellules','Autre'],
   'Os / Tissu mou':         ['Ostéosarcome','Sarcome d\'Ewing','Chondrosarcome','Liposarcome','Fibrosarcome','Autre'],
@@ -58,15 +58,25 @@ const BASE_DIAG = [
 ];
 const SITES_META = ['Poumon','Foie','Os','Cerveau','Ganglions','Péritoine','Peau','Surrénale','Rein','Plèvre','Autre'];
 const CIM10_LIST = [
-  {code:'C50',label:'C50 — Sein'},{code:'C34',label:'C34 — Bronches et poumon'},
-  {code:'C18',label:'C18 — Côlon'},{code:'C61',label:'C61 — Prostate'},
-  {code:'C53',label:"C53 — Col de l'utérus"},{code:'C73',label:'C73 — Thyroïde'},
-  {code:'C22',label:'C22 — Foie'},{code:'C16',label:'C16 — Estomac'},
-  {code:'C25',label:'C25 — Pancréas'},{code:'C56',label:'C56 — Ovaire'},
-  {code:'C64',label:'C64 — Rein'},{code:'C67',label:'C67 — Vessie'},
-  {code:'C81',label:'C81 — Hodgkin'},{code:'C91',label:'C91 — Leucémie lymphoïde'},
-  {code:'C43',label:'C43 — Mélanome'},{code:'C71',label:'C71 — Cerveau'},
-];const CIM10_TO_ORGANE = {
+  {code:'C50', label:'C50 — Sein',                  canreg:'C50.9', sym:'BR'},
+  {code:'C34', label:'C34 — Bronches et poumon',     canreg:'C34.9', sym:'LU'},
+  {code:'C18', label:'C18 — Côlon',                  canreg:'C18.9', sym:'CO'},
+  {code:'C61', label:'C61 — Prostate',               canreg:'C61.9', sym:'PR'},
+  {code:'C53', label:"C53 — Col de l'utérus",        canreg:'C53.9', sym:'CX'},
+  {code:'C73', label:'C73 — Thyroïde',               canreg:'C73.9', sym:'TH'},
+  {code:'C22', label:'C22 — Foie',                   canreg:'C22.0', sym:'LI'},
+  {code:'C16', label:'C16 — Estomac',                canreg:'C16.9', sym:'ST'},
+  {code:'C25', label:'C25 — Pancréas',               canreg:'C25.9', sym:'PA'},
+  {code:'C56', label:'C56 — Ovaire',                 canreg:'C56.9', sym:'OV'},
+  {code:'C64', label:'C64 — Rein',                   canreg:'C64.9', sym:'KI'},
+  {code:'C67', label:'C67 — Vessie',                 canreg:'C67.9', sym:'BL'},
+  {code:'C81', label:'C81 — Hodgkin',                canreg:'C81.9', sym:'HD'},
+  {code:'C91', label:'C91 — Leucémie lymphoïde',     canreg:'C91.1', sym:'LL'},
+  {code:'C43', label:'C43 — Mélanome',               canreg:'C43.9', sym:'ME'},
+  {code:'C71', label:'C71 — Cerveau',                canreg:'C71.9', sym:'CN'},
+];
+
+const CIM10_TO_ORGANE = {
   C50: 'Sein', C34: 'Poumon', C18: 'Côlon / Rectum', C61: 'Prostate',
   C53: "Col de l'utérus", C73: 'Thyroïde', C22: 'Foie / Voies biliaires', C16: 'Estomac',
   C25: 'Pancréas', C56: 'Ovaire', C64: 'Rein', C67: 'Vessie',
@@ -434,7 +444,7 @@ export default function Page2() {
           {/* E — Récepteurs */}
           <SectionBlock label="E — Récepteurs hormonaux & HER2" color="#e67e22">
             <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-              <RecepteurRow label="ER (Œstrogène)"    value={data.recepteur_er} onChange={up('recepteur_er')} options={['positif','negatif','inconnu']} colors={['#00C9A7','#FF6B6B','#7A8BAD']} />
+              <RecepteurRow label="ER (إ’strogène)"    value={data.recepteur_er} onChange={up('recepteur_er')} options={['positif','negatif','inconnu']} colors={['#00C9A7','#FF6B6B','#7A8BAD']} />
               <RecepteurRow label="PR (Progestérone)" value={data.recepteur_pr} onChange={up('recepteur_pr')} options={['positif','negatif','inconnu']} colors={['#00C9A7','#FF6B6B','#7A8BAD']} />
               <RecepteurRow label="HER2"              value={data.her2}         onChange={up('her2')}         options={['positif','equivoque','negatif','inconnu']} colors={['#00C9A7','#FFA26B','#FF6B6B','#7A8BAD']} />
             </div>
@@ -506,12 +516,8 @@ export default function Page2() {
       <CustomFieldsRenderer
         section="diagnostic"
         values={data.customFields || {}}
-        onChange={(id, name, val) => update({
-          customFields: {
-            ...(data.customFields || {}),
-            [id]: val,
-            [name]: val,
-          },
+        onChange={(name, val) => update({
+          customFields: { ...(data.customFields || {}), [name]: val },
         })}
       />
 

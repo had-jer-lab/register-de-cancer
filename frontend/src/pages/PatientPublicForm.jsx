@@ -8,12 +8,12 @@
  *   <Route path="/patient-form/:token" element={<PatientPublicForm />} />
  */
 
+import API_BASE from '../utils/apiConfig';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 
-const API = process.env.REACT_APP_API_URL 
-  || `http://${window.location.hostname}:8000/api`;
+const API = API_BASE;
 export default function PatientPublicForm() {
   const { token } = useParams();  // ← react-router, pas window.location
 
@@ -203,3 +203,6 @@ export default function PatientPublicForm() {
     </div>
   );
 } 
+
+
+

@@ -1,4 +1,5 @@
 // components/IDCardScanner.jsx
+import { apiUrl } from '../utils/apiConfig';
 import React, { useState, useRef, useCallback } from 'react';
 
 export function IDCardScanner({ onFill }) {
@@ -27,7 +28,7 @@ export function IDCardScanner({ onFill }) {
     setApplied(false);
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch('http://localhost:8000/api/patients/scan-id/', {
+      const res = await fetch(apiUrl('/patients/scan-id/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -229,3 +230,4 @@ const s = {
   applyDone:   { background:'#68d391', cursor:'default' },
   resetSmall:  { padding:'9px 14px', borderRadius:8, border:'1px solid #e2e8f0', background:'white', color:'#718096', fontSize:13, cursor:'pointer' },
 };
+

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiUrl } from '../utils/apiConfig';
 
 const AuthContext = createContext();
 export const useAuth = () => {
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     // Optional: Call logout endpoint on backend
     try {
       if (accessToken) {
-        await fetch('http://localhost:8000/api/auth/logout/', {
+        await fetch(apiUrl('/auth/logout/'), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -81,3 +82,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+

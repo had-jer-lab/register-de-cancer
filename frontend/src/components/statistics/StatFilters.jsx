@@ -25,7 +25,7 @@ export const StatFilters = ({ filters, onFilterChange, loading, allDairat = [] }
           </select>
         </div>
 
-        {/* Âge */}
+        {/* أ‚ge */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Tranche d'âge

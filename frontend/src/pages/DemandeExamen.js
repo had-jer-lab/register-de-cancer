@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-const API = 'http://localhost:8000/api';
+import API_BASE from '../utils/apiConfig';
+
+const API = API_BASE;
 
 async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('access_token');
@@ -78,7 +80,7 @@ const EXAMENS_IMAGERIE = {
   'Radiologie conventionnelle': [
     'Radiographie thoracique (face + profil)', 'Radiographie osseuse',
     'Radiographie du rachis', 'Mammographie bilatérale',
-    'Transit œso-gastro-duodénal', 'Lavement opaque',
+    'Transit إ“so-gastro-duodénal', 'Lavement opaque',
   ],
   'Interventionnel': [
     'Biopsie scanno-guidée', 'Biopsie écho-guidée',
@@ -223,24 +225,44 @@ export function ModalDemandeExamen({ patientId, cancers = [], onClose, onSaved }
     }));
   };
 
+  const getApiErrorMessage = (err) => {
+    const data = err?.response?.data || err;
+    if (typeof data === 'string') return data;
+    if (data && typeof data === 'object') {
+      return Object.values(data).flat().join(' ') || 'Veuillez vérifier les champs';
+    }
+    return 'Veuillez vérifier les champs';
+  };
+
   const handleSubmit = async () => {
+    const typeDemande = (form.type_demande || '').trim() || 'biologie';
+    const urgence = (form.urgence || '').trim() || 'normal';
     if (form.examens_demandes.length === 0) {
-      setError('Veuillez sélectionner au moins un examen.');
+      setError('Veuillez remplir tous les champs obligatoires.');
       return;
     }
     setSaving(true);
     setError('');
     try {
-      const payload = { ...form };
-      if (!payload.cancer) delete payload.cancer;
-      if (!payload.date_souhaitee) delete payload.date_souhaitee;
+      const payload = {
+        patient: Number(patientId),
+        type_demande: typeDemande,
+        urgence,
+        examens_demandes: form.examens_demandes,
+      };
+      const motif = form.motif_clinique?.trim();
+      const obs = form.observations?.trim();
+      if (motif) payload.motif_clinique = motif;
+      if (obs) payload.observations = obs;
+      if (form.cancer) payload.cancer = Number(form.cancer);
+      if (form.date_souhaitee) payload.date_souhaitee = form.date_souhaitee;
       await apiFetch(`/patients/${patientId}/demandes/`, {
         method: 'POST',
         body: JSON.stringify(payload),
       });
       onSaved();
     } catch (e) {
-      setError('Erreur lors de l\'enregistrement.');
+      setError(getApiErrorMessage(e));
     } finally {
       setSaving(false);
     }
@@ -1042,3 +1064,4 @@ const sty = {
     display: 'inline-flex', alignItems: 'center', gap: 4,
   },
 };
+

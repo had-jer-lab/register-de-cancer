@@ -232,12 +232,8 @@ export default function Page4() {
           <CustomFieldsRenderer
             section="autres"
             values={data.customFields || {}}
-            onChange={(id, name, val) => update({
-              customFields: {
-                ...(data.customFields || {}),
-                [id]: val,
-                [name]: val,
-              },
+            onChange={(name, val) => update({
+              customFields: { ...(data.customFields || {}), [name]: val },
             })}
           />
 

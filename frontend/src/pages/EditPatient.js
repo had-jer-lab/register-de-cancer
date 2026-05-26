@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const API = 'http://localhost:8000/api';
+import API_BASE from '../utils/apiConfig';
+
+const API = API_BASE;
 
 async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('access_token');
@@ -36,7 +38,7 @@ const SOUS_TYPES = {
   'Foie / Voies biliaires': ['Carcinome hépatocellulaire','Cholangiocarcinome','Angiosarcome','Hépatoblastome','Autre'],
   'Estomac':                ['Adénocarcinome intestinal','Adénocarcinome diffus','Lymphome MALT','Tumeur stromale (GIST)','Autre'],
   'Pancréas':               ['Adénocarcinome canalaire','Tumeur neuroendocrine','Cystadénocarcinome','Tumeur pseudopapillaire','Autre'],
-  'Ovaire':                 ['Séreux','Mucineux','Endométrioïde','À cellules claires','Tumeur germinale','Autre'],
+  'Ovaire':                 ['Séreux','Mucineux','Endométrioïde','أ€ cellules claires','Tumeur germinale','Autre'],
   'Rein':                   ['Carcinome à cellules claires','Carcinome papillaire','Carcinome chromophobe','Tumeur de Wilms','Autre'],
   'Vessie':                 ['Carcinome urothélial','Carcinome épidermoïde','Adénocarcinome','Carcinome à petites cellules','Autre'],
   'Os / Tissu mou':         ['Ostéosarcome','Sarcome d\'Ewing','Chondrosarcome','Liposarcome','Fibrosarcome','Autre'],
@@ -253,19 +255,7 @@ export default function EditPatient() {
           date_naissance: form.date_naissance,
           sexe: form.sexe,
           phone: form.phone,
-          email: form.email,
-          national_id: form.national_id,
-          situation_familiale: form.situation_familiale,
-          profession: form.profession,
-          adresse: form.adresse,
-          poids: form.poids ? parseFloat(form.poids) : null,
-          taille: form.taille ? parseFloat(form.taille) : null,
-          imc: form.imc ? parseFloat(form.imc) : null,
-          allergies: form.allergies,
-          autres_allergies: form.autres_allergies,
-          antecedents_familiaux: form.antecedents_familiaux,
-          antecedents_fam_yn: form.antecedents_fam_yn,
-          observations: form.observations,
+          national_id: form.national_id || null,
           wilaya_text: form.wilaya,
           commune_text: form.commune,
         }),
@@ -278,7 +268,7 @@ export default function EditPatient() {
           organe:          cancerForm.organe || '',
           stade_clinique:  cancerForm.stade_clinique || '',
           tnm:             [cancerForm.tnmT, cancerForm.tnmN, cancerForm.tnmM].filter(Boolean).join(''),
-          grade:           cancerForm.grade || '',
+          grade:           String(cancerForm.grade || '').slice(0, 20),
           date_diagnostic: cancerForm.date_diagnostic ? cancerForm.date_diagnostic : null,
           type_histologique: cancerForm.type_histologique || '',
           type_tumeur: cancerForm.type_tumeur || '',
@@ -519,7 +509,7 @@ export default function EditPatient() {
                 )}
                 {!cancerForm.organe && (
                   <div style={s.subTypePlaceholder}>
-                    ☝️ Sélectionnez d'abord l'organe principal
+                    ☁️ Sélectionnez d'abord l'organe principal
                   </div>
                 )}
               </SectionCard>

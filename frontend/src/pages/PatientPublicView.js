@@ -1,7 +1,8 @@
+import API_BASE from '../utils/apiConfig';
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
-const API = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+const API = API_BASE;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -236,7 +237,7 @@ export default function PatientPublicView() {
             <InfoCard icon="🪪" title="Informations personnelles" color="#4A6CF7">
               <Row label="Nom complet"       value={`${patient.first_name} ${patient.last_name}`} />
               <Row label="Date de naissance" value={fmtDate(patient.date_naissance)} />
-              <Row label="Âge"               value={age !== null ? `${age} ans` : null} />
+              <Row label="أ‚ge"               value={age !== null ? `${age} ans` : null} />
               <Row label="Sexe"              value={patient.sexe === 'M' ? 'Masculin' : 'Féminin'} />
               <Row label="Téléphone"         value={patient.phone} />
               <Row label="N° Dossier"        value={patient.numero_dossier} />
@@ -599,3 +600,4 @@ const s = {
     fontSize: 11, color: '#7A8BAD', fontWeight: 600,
   },
 };
+

@@ -346,12 +346,8 @@ export default function Page6() {
       <CustomFieldsRenderer
         section="traitement"
         values={data.customFields || {}}
-        onChange={(id, name, val) => update({
-          customFields: {
-            ...(data.customFields || {}),
-            [id]: val,
-            [name]: val,
-          },
+        onChange={(name, val) => update({
+          customFields: { ...(data.customFields || {}), [name]: val },
         })}
       />
 

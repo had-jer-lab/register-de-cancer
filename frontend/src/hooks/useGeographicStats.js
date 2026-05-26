@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE from '../utils/apiConfig';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+
 
 // Mock data for demonstration - will be replaced by real API
 const MOCK_DATA = {
@@ -143,3 +144,5 @@ export const useGeographicStats = () => {
 };
 
 export default useGeographicStats;
+
+

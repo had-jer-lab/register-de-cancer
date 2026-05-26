@@ -49,7 +49,6 @@ const AxisSelector = ({
     daira: 'daira',
     dairas: 'daira',
     annee: 'year',
-    année: 'year',
     mois: 'month',
     cancer: 'cancer',
     'type de cancer': 'cancer',

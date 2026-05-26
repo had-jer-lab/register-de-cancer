@@ -5,28 +5,14 @@
 
 import React, { useState, useEffect } from 'react';
 
-const API = 'http://localhost:8000/api';
-
-async function apiFetch(path, options = {}) {
-  const token = localStorage.getItem('access_token');
-  const res = await fetch(`${API}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    ...options,
-  });
-  if (!res.ok) throw await res.json().catch(() => ({}));
-  if (res.status === 204) return null;
-  return res.json();
-}
+import { fetchActiveCustomFields } from '../utils/customFields';
 
 // ─── Rendu d'un champ individuel ──────────────────────────────────────────────
 
-function RenderField({ field, value, onChange }) {
+function RenderField({ field, value, onChange, hasError }) {
   const base = {
     background: '#fff',
-    border: '1.5px solid #DDE4F3',
+    border: `1.5px solid ${hasError ? '#FF6B6B' : '#DDE4F3'}`,
     borderRadius: 10,
     padding: '10px 14px',
     fontSize: 13.5,
@@ -130,17 +116,19 @@ function RenderField({ field, value, onChange }) {
 
 // ─── Composant principal ──────────────────────────────────────────────────────
 
-export default function CustomFieldsRenderer({ section = 'diagnostic', values = {}, onChange }) {
+export default function CustomFieldsRenderer({
+  section = 'diagnostic',
+  values = {},
+  onChange,
+  invalidNames = [],
+}) {
   const [fields,  setFields]  = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch(`/patients/custom-fields/?section=${section}`)
-      .then(data => {
-        const list = Array.isArray(data) ? data : (data.results || []);
-        setFields(list.filter(f => f.is_active && f.section === section));
-      })
-      .catch(() => {})
+    fetchActiveCustomFields(section)
+      .then(setFields)
+      .catch(() => setFields([]))
       .finally(() => setLoading(false));
   }, [section]);
 
@@ -216,10 +204,16 @@ export default function CustomFieldsRenderer({ section = 'diagnostic', values = 
                 </span>
               )}
             </label>
+            {invalidNames.includes(field.name) && (
+              <div style={{ fontSize: 11, color: '#FF6B6B', fontWeight: 700 }}>
+                Ce champ est obligatoire
+              </div>
+            )}
             <RenderField
               field={field}
-              value={values[field.name] || values[`custom_${field.id}`] || ''}
-              onChange={val => onChange(field.id, field.name, val)}
+              value={values[field.name] ?? ''}
+              hasError={invalidNames.includes(field.name)}
+              onChange={val => onChange(field.name, val)}
             />
           </div>
         ))}
@@ -229,23 +223,3 @@ export default function CustomFieldsRenderer({ section = 'diagnostic', values = 
 }
 
 
-// ══════════════════════════════════════════
-// USAGE dans Page2.js — à ajouter :
-//
-// import CustomFieldsRenderer from '../components/CustomFieldsRenderer';
-//
-// Dans le state du PatientContext, ajouter :
-//   customFields: {}  // { fieldId: value, ... }
-//
-// Dans la colonne droite de Page2 :
-//   <SC label="Diagnostic & Cancer">
-//     ...champs existants...
-//     <CustomFieldsRenderer
-//       section="diagnostic"
-//       values={data.customFields || {}}
-//       onChange={(id, name, val) => update({
-//         customFields: { ...(data.customFields || {}), [id]: val, [name]: val }
-//       })}
-//     />
-//   </SC>
-// ══════════════════════════════════════════

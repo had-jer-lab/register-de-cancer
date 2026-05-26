@@ -6,13 +6,11 @@ class RcpConfig(AppConfig):
     name = 'rcp'
     verbose_name = 'Réunions RCP'
 
-
     def ready(self):
-        # يشتغل مرة واحدة لما يبدأ Django
-        import os
-        # نتفادى التشغيل المزدوج في development
-        if os.environ.get('RUN_MAIN') != 'true':
-            return
+        from django.db.models.signals import post_migrate
+        post_migrate.connect(self._start_scheduler, sender=self)
+
+    def _start_scheduler(self, **kwargs):
         try:
             from . import scheduler
             scheduler.start()

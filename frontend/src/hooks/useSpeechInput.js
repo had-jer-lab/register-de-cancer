@@ -8,8 +8,8 @@ export function useSpeechInput({ lang = 'fr-FR', onResult, continuous = true } =
   const recogRef      = useRef(null);
   const activeRef     = useRef(false);
   const onResultRef   = useRef(onResult);
-  const accumulatedRef = useRef('');   // تجميع كل النص
-  const silenceTimer  = useRef(null);  // مؤقت الصمت
+  const accumulatedRef = useRef('');   // طھط¬ظ…يع ظƒظ„ ط§ظ„ظ†ص
+  const silenceTimer  = useRef(null);  // ظ…ط¤ظ‚ت ط§ظ„طµظ…ت
 
   useEffect(() => { onResultRef.current = onResult; }, [onResult]);
 
@@ -20,9 +20,9 @@ export function useSpeechInput({ lang = 'fr-FR', onResult, continuous = true } =
 
     const recog           = new SR();
     recog.lang            = lang;
-    recog.interimResults  = true;   // ✅ نتائج مؤقتة أثناء الكلام
+    recog.interimResults  = true;   // ✅ ظ†تائج ظ…ط¤ظ‚تة ط£ط«ظ†اء ط§ظ„ظƒظ„ط§ظ…
     recog.maxAlternatives = 1;
-    recog.continuous      = true;   // ✅ لا يتوقف بعد أول جملة
+    recog.continuous      = true;   // ✅ ظ„ا ظٹطھظˆظ‚ف بعد ط£ظˆظ„ ط¬ظ…ظ„ة
 
     recog.onstart = () => {
       activeRef.current = true;
@@ -31,7 +31,7 @@ export function useSpeechInput({ lang = 'fr-FR', onResult, continuous = true } =
     };
 
     recog.onresult = (e) => {
-      // نجمع فقط النتائج النهائية
+      // ظ†ط¬ظ…ع ظپظ‚ط ط§ظ„ظ†تائج ط§ظ„ظ†ظ‡ائية
       let finalText = '';
       for (let i = 0; i < e.results.length; i++) {
         if (e.results[i].isFinal) {
@@ -42,7 +42,7 @@ export function useSpeechInput({ lang = 'fr-FR', onResult, continuous = true } =
         accumulatedRef.current = finalText.trim();
       }
 
-      // مؤقت صمت — إذا توقف الكلام 1.5 ثانية نرسل النتيجة
+      // ظ…ط¤ظ‚ت طµظ…ت — إذا طھظˆظ‚ف ط§ظ„ظƒظ„ط§ظ… 1.5 ط«ط§ظ†ية ظ†ط±ط³ظ„ ط§ظ„ظ†تيجة
       clearTimeout(silenceTimer.current);
       silenceTimer.current = setTimeout(() => {
         if (accumulatedRef.current && activeRef.current) {
@@ -53,12 +53,12 @@ export function useSpeechInput({ lang = 'fr-FR', onResult, continuous = true } =
     };
 
     recog.onend = () => {
-      // إذا كان لا يزال في وضع الاستماع أعد التشغيل (continuous workaround)
+      // إذا ظƒط§ظ† ظ„ا ظٹط²ط§ظ„ في ظˆضع ط§ظ„ط§ط³طھظ…اع أعد ط§ظ„طھط´ط؛ظٹظ„ (continuous workaround)
       if (activeRef.current) {
         try { recog.start(); } catch (_) {}
         return;
       }
-      // إرسال ما تبقى
+      // ط¥ط±ط³ط§ظ„ ظ…ا طھط¨ظ‚ظ‰
       clearTimeout(silenceTimer.current);
       if (accumulatedRef.current) {
         onResultRef.current?.(accumulatedRef.current);
@@ -68,7 +68,7 @@ export function useSpeechInput({ lang = 'fr-FR', onResult, continuous = true } =
     };
 
     recog.onerror = (e) => {
-      if (e.error === 'no-speech') return; // تجاهل خطأ الصمت
+      if (e.error === 'no-speech') return; // طھط¬ط§ظ‡ظ„ خطأ ط§ظ„طµظ…ت
       activeRef.current = false;
       clearTimeout(silenceTimer.current);
       setListening(false);
@@ -93,7 +93,7 @@ export function useSpeechInput({ lang = 'fr-FR', onResult, continuous = true } =
     if (!recogRef.current || !activeRef.current) return;
     activeRef.current = false;
     clearTimeout(silenceTimer.current);
-    // إرسال ما تجمع قبل الإيقاف
+    // ط¥ط±ط³ط§ظ„ ظ…ا طھط¬ظ…ع ظ‚ط¨ظ„ ط§ظ„ط¥ظٹظ‚اف
     if (accumulatedRef.current) {
       onResultRef.current?.(accumulatedRef.current);
       accumulatedRef.current = '';

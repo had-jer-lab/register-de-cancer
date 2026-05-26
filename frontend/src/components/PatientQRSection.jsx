@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import API_BASE from '../utils/apiConfig';
 // QR généré via API externe — aucune dépendance npm
 function getQRImgUrl(text, size) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&color=1e1b4b&bgcolor=ffffff&qzone=2&format=png`;
 }
 
-const API = process.env.REACT_APP_API_URL
-    || `http://192.168.1.9:8000/api`;
+const API = API_BASE;
     
 const DEFAULT_FIELDS = [
   { key: 'telephone',   label: 'Téléphone',              type: 'tel',      required: false },
@@ -171,7 +171,7 @@ export default function PatientQRSection({ patientId, patientName, dossier, moda
               <span style={s.badge}>{submissions.length} réponse{submissions.length > 1 ? 's' : ''}</span>
             )}
           </div>
-          <span style={{ fontSize: 18, color: '#94A3B8', transform: expanded ? 'rotate(180deg)' : 'none', transition: '0.2s' }}>⌄</span>
+          <span style={{ fontSize: 18, color: '#94A3B8', transform: expanded ? 'rotate(180deg)' : 'none', transition: '0.2s' }}>âŒ„</span>
         </div>
 
         {expanded && (
@@ -242,7 +242,7 @@ export default function PatientQRSection({ patientId, patientName, dossier, moda
       {/* Hidden print card */}
       {qrData && <PrintCard />}
 
-      {/* Modal impression — كيما الصورة */}
+      {/* Modal impression — ظƒظٹظ…ا ط§ظ„طµظˆرة */}
       {showPrint && qrData && (
         <div style={s.overlay} onClick={e => e.target === e.currentTarget && setShowPrint(false)}>
           <div style={s.modal}>
@@ -290,3 +290,6 @@ export default function PatientQRSection({ patientId, patientName, dossier, moda
     </>
   );
 }
+
+
+

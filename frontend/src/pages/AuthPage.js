@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, Heart, Database, FileText, Users, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { apiUrl } from '../utils/apiConfig';
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function AuthPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login/', {
+      const response = await fetch(apiUrl('/auth/login/'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -318,3 +319,4 @@ const s = {
     fontSize: 12, color: '#A0AEC0', fontWeight: 600,
   },
 };
+

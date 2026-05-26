@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, 
 const COLORS = ['#2563eb', '#e05c4b', '#059669', '#f59e0b', '#7c3aed', '#0891b2', '#6366f1', '#84cc16'];
 
 const ChartDisplay = ({ chartData, chartType, axisX, axisY }) => {
-  if (!chartData || !Array.isArray(chartData) || chartData.length === 0) return <div style={{ padding: 22, color: '#64748b' }}>Aucune donn�e de graphiques.</div>;
+  if (!chartData || !Array.isArray(chartData) || chartData.length === 0) return <div style={{ padding: 22, color: '#64748b' }}>Aucune donnï؟½e de graphiques.</div>;
 
   const renderCommon = (children) => (
     <div style={{ background: 'white', borderRadius: 12, padding: 14, boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>

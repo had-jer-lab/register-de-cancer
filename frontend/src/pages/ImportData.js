@@ -1,10 +1,11 @@
+import API_BASE, { API_ROOT } from '../utils/apiConfig';
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import DuplicateDetectionModal from '../components/DuplicateDetectionModal';
 
 // ── API helper ────────────────────────────────────────────────────────────────
-const API = 'http://localhost:8000/api';
+const API = API_BASE;
 
 // Get valid token — refresh if expired using stored credentials
 async function getValidToken() {
@@ -25,7 +26,7 @@ async function getValidToken() {
   const refresh = localStorage.getItem('refresh_token');
   if (refresh) {
     // Find refresh URL by trying login endpoint variations
-    const BASE = 'http://localhost:8000';
+    const BASE = API_ROOT;
     const REFRESH_URLS = [
       `${BASE}/api/token/refresh/`,
       `${BASE}/api/auth/token/refresh/`,
@@ -56,7 +57,7 @@ async function getValidToken() {
   const username = localStorage.getItem('username') || localStorage.getItem('user_email');
   const password = localStorage.getItem('user_password');
   if (username && password) {
-    const BASE = 'http://localhost:8000';
+    const BASE = API_ROOT;
     const LOGIN_URLS = [
       `${BASE}/api/token/`,
       `${BASE}/api/auth/token/`,
@@ -112,7 +113,7 @@ const CANREG5_PATIENT_FIELDS = [
   { key: 'middle_name',    label: 'Deuxième prénom',       type: 'text' },
   { key: 'date_last_contact', label: 'Dernière date contact', type: 'text' },
   { key: 'status',         label: 'Statut (Status)',       type: 'text' },
-  { key: 'age',            label: 'Âge',                   type: 'text' },
+  { key: 'age',            label: 'أ‚ge',                   type: 'text' },
   { key: 'address',        label: 'Adresse',               type: 'text' },
 ];
 
@@ -206,7 +207,7 @@ function canRegRowToPatient(row) {
   //   STAT = Statut vital (1=vivant, 2=décédé)
   //   REGNO = N° registre (PatientID unique)
   //   PERS = N° personnel (interne)
-  //   AGE = Âge au diagnostic
+  //   AGE = أ‚ge au diagnostic
 
   const surname   = g('famn', 'surname', 'sname', 'nom', 'last_name', 'family_name');
   const firstName = g('firstn', 'firstname', 'first_name', 'prenom', 'given_name');
@@ -250,7 +251,7 @@ function canRegRowToPatient(row) {
   //   RECS = N° enregistrement
   //   CHEC = Statut vérification
   //   MPCODE = Code primaires multiples
-  //   AGE = Âge au diagnostic
+  //   AGE = أ‚ge au diagnostic
 
   return {
     nin,
@@ -620,7 +621,7 @@ export default function ImportData() {
         };
 
         const freshToken = await getValidToken();
-        const patRes = await fetch('http://localhost:8000/api/patients/', {
+        const patRes = await fetch(`${API}/patients/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${freshToken}` },
           body: JSON.stringify(patientPayload),
@@ -639,7 +640,7 @@ export default function ImportData() {
             // Token expired → flag for reconnect (no point continuing)
             if (patRes.status === 401 || errStr.includes('token') || errStr.includes('expired') || errStr.includes('jeton')) {
               const retryToken = await getValidToken();
-              const retryRes = await fetch('http://localhost:8000/api/patients/', {
+              const retryRes = await fetch(`${API}/patients/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${retryToken}` },
                 body: JSON.stringify(patientPayload),
@@ -648,7 +649,7 @@ export default function ImportData() {
                 const retryPatient = await retryRes.json();
                 for (const row of rows) {
                   if (!row.topography && !row.icd10 && !row.incidenceDate) continue;
-                  await fetch(`http://localhost:8000/api/patients/${retryPatient.id}/cancers/`, {
+                  await fetch(`${API}/patients/${retryPatient.id}/cancers/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${retryToken}` },
                     body: JSON.stringify({ stade_clinique: row.stage||'', date_diagnostic: row.incidenceDate||null, icd10_code: row.icd10||'' }),
@@ -673,7 +674,7 @@ export default function ImportData() {
         // Create one cancer per tumour row
         for (const row of rows) {
           if (!row.topography && !row.icd10 && !row.incidenceDate) continue;
-          await fetch(`http://localhost:8000/api/patients/${patient.id}/cancers/`, {
+          await fetch(`${API}/patients/${patient.id}/cancers/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${freshToken}` },
             body: JSON.stringify({
@@ -782,7 +783,7 @@ export default function ImportData() {
         };
 
         // PATCH the existing patient
-        const patchRes = await fetch(`http://localhost:8000/api/patients/${existingId}/`, {
+        const patchRes = await fetch(`${API}/patients/${existingId}/`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify(patchPayload),
@@ -792,7 +793,7 @@ export default function ImportData() {
           // Add cancer from import row if exists
           const importRow = parsedRows[savedModal?.rowIndex];
           if (importRow?.topography) {
-            await fetch(`http://localhost:8000/api/patients/${existingId}/cancers/`, {
+            await fetch(`${API}/patients/${existingId}/cancers/`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
               body: JSON.stringify({
@@ -1197,3 +1198,8 @@ const s = {
   formLabel:     { fontSize: 12, fontWeight: 600, color: '#718096' },
   formInput:     { padding: '8px 12px', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 13, background: 'white', outline: 'none' },
 };
+
+
+
+
+

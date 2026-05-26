@@ -4,8 +4,15 @@ import { OngletDemandes } from './DemandeExamen';
 import PatientQRSection from '../components/PatientQRSection';
 import { MicButton } from '../components/MicButton';
 import CustomFieldsRenderer from '../components/CustomFieldsRenderer';
+import API_BASE from '../utils/apiConfig';
+import {
+  fetchActiveCustomFields,
+  buildCustomFieldsPayload,
+  validateRequiredCustomFields,
+} from '../utils/customFields';
 
-const API = process.env.REACT_APP_API_URL || `http://${window.location.hostname}:8000/api`;
+const API = API_BASE;
+
 async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('access_token');
   const res = await fetch(`${API}${path}`, {
@@ -23,6 +30,7 @@ async function apiFetch(path, options = {}) {
       err.data = errData;
       throw err;
     } catch (e) {
+      if (e.data) throw e;
       throw new Error(`Erreur HTTP ${res.status}: ${res.statusText}`);
     }
   }
@@ -74,7 +82,7 @@ const SOUS_TYPES = {
   'Foie / Voies biliaires': ['Carcinome hépatocellulaire','Cholangiocarcinome','Angiosarcome','Hépatoblastome','Autre'],
   'Estomac':                ['Adénocarcinome intestinal','Adénocarcinome diffus','Lymphome MALT','Tumeur stromale (GIST)','Autre'],
   'Pancréas':               ['Adénocarcinome canalaire','Tumeur neuroendocrine','Cystadénocarcinome','Tumeur pseudopapillaire','Autre'],
-  'Ovaire':                 ['Séreux','Mucineux','Endométrioïde','À cellules claires','Tumeur germinale','Autre'],
+  'Ovaire':                 ['Séreux','Mucineux','Endométrioïde','أ€ cellules claires','Tumeur germinale','Autre'],
   'Rein':                   ['Carcinome à cellules claires','Carcinome papillaire','Carcinome chromophobe','Tumeur de Wilms','Autre'],
   'Vessie':                 ['Carcinome urothélial','Carcinome épidermoïde','Adénocarcinome','Carcinome à petites cellules','Autre'],
   'Os / Tissu mou':         ['Ostéosarcome','Sarcome d\'Ewing','Chondrosarcome','Liposarcome','Fibrosarcome','Autre'],
@@ -431,9 +439,15 @@ function FormSubmissionsSection({ patientId }) {
   }, [patientId]);
 
   if (loading) return <div style={{ fontSize: 12, color: '#94A3B8', padding: '8px 0' }}>Chargement…</div>;
-  if (submissions.length === 0) return <EmptyState icon="📋" text="Aucune réponse reçue via le formulaire QR." />;
 
-  const latest = submissions[0];
+  const qrSubmissions = submissions.filter(
+    s => (s.submitted_data || {}).source !== 'dossier_manual'
+  );
+  if (qrSubmissions.length === 0) {
+    return <EmptyState icon="📋" text="Aucune réponse reçue via le formulaire QR." />;
+  }
+
+  const latest = qrSubmissions[0];
   const d = latest.submitted_data || {};
 
   const LABELS = {
@@ -443,13 +457,16 @@ function FormSubmissionsSection({ patientId }) {
     sport: 'Activité physique', tabac: 'Tabagisme',
     alcool: 'Alcool', allergies: 'Allergies',
     antecedents: 'Antécédents familiaux', observations: 'Observations',
+    email: 'Email', situation_familiale: 'Situation familiale',
+    couverture_sociale: 'Couverture sociale', adresse: 'Adresse',
+    imc: 'IMC', autres_allergies: 'Autres allergies', alim: 'Alimentation',
   };
 
   return (
     <div>
       <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600, marginBottom: 10 }}>
         Dernière réponse : {new Date(latest.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-        {submissions.length > 1 && <span style={{ marginLeft: 8, color: '#6366f1' }}>({submissions.length} réponses au total)</span>}
+        {qrSubmissions.length > 1 && <span style={{ marginLeft: 8, color: '#6366f1' }}>({qrSubmissions.length} réponses au total)</span>}
       </div>
       {Object.entries(LABELS).map(([key, label]) =>
         d[key] ? <InfoRow key={key} label={label} value={d[key]} /> : null
@@ -683,13 +700,27 @@ function AddConsultationModal({ patientId, onClose, onSaved }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const getApiErrorMessage = (err) => {
+    const data = err?.response?.data || err;
+    if (typeof data === 'string') return data;
+    if (data && typeof data === 'object') {
+      return Object.values(data).flat().join(' ') || 'Veuillez vérifier les champs';
+    }
+    return 'Veuillez vérifier les champs';
+  };
+
   const handleSubmit = async () => {
-    if (!form.consultation_date) { setError('La date est obligatoire.'); return; }
+    if (!form.consultation_date) {
+      setError('Veuillez remplir la date de consultation.');
+      return;
+    }
     setLoading(true);
     try {
-      await apiFetch(`/patients/${patientId}/consultations/`, { method: 'POST', body: JSON.stringify(form) });
+      const payload = { ...form };
+      if (payload.next_visit_date === '') payload.next_visit_date = null;
+      await apiFetch(`/patients/${patientId}/consultations/`, { method: 'POST', body: JSON.stringify(payload) });
       onSaved();
-    } catch { setError('Erreur lors de l\'enregistrement.'); }
+    } catch (err) { setError(getApiErrorMessage(err)); }
     finally { setLoading(false); }
   };
 
@@ -734,7 +765,7 @@ function AddConsultationModal({ patientId, onClose, onSaved }) {
   );
 }
 
-function AddCancerModal({ patientId, onClose, onSaved, form, onChange, onCustomFieldChange, onSubmit, loading, error }) {
+function AddCancerModal({ patientId, onClose, onSaved, form, onChange, onCustomFieldChange, onSubmit, loading, error, customFieldInvalidNames = [] }) {
   const isTripleNeg = form.recepteur_er === 'negatif' && form.recepteur_pr === 'negatif' && form.her2 === 'negatif';
 
   return (
@@ -907,7 +938,7 @@ function AddCancerModal({ patientId, onClose, onSaved, form, onChange, onCustomF
 
               <SectionBlock label="E — Récepteurs hormonaux & HER2" color="#e67e22">
                 <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-                  <RecepteurRow label="ER (Œstrogène)" value={form.recepteur_er} onChange={v => onChange('recepteur_er', v)} options={['positif','negatif','inconnu']} colors={['#00C9A7','#FF6B6B','#7A8BAD']} />
+                  <RecepteurRow label="ER (إ’strogène)" value={form.recepteur_er} onChange={v => onChange('recepteur_er', v)} options={['positif','negatif','inconnu']} colors={['#00C9A7','#FF6B6B','#7A8BAD']} />
                   <RecepteurRow label="PR (Progestérone)" value={form.recepteur_pr} onChange={v => onChange('recepteur_pr', v)} options={['positif','negatif','inconnu']} colors={['#00C9A7','#FF6B6B','#7A8BAD']} />
                   <RecepteurRow label="HER2" value={form.her2} onChange={v => onChange('her2', v)} options={['positif','equivoque','negatif','inconnu']} colors={['#00C9A7','#FFA26B','#FF6B6B','#7A8BAD']} />
                 </div>
@@ -955,7 +986,12 @@ function AddCancerModal({ patientId, onClose, onSaved, form, onChange, onCustomF
             </div>
           </div>
 
-          <CustomFieldsRenderer section="diagnostic" values={form.customFields || {}} onChange={onCustomFieldChange} />
+          <CustomFieldsRenderer
+            section="diagnostic"
+            values={form.customFields || {}}
+            onChange={onCustomFieldChange}
+            invalidNames={customFieldInvalidNames}
+          />
         </div>
         <div style={s.modalFooter}>
           <button style={s.btnGhost} onClick={onClose}>Annuler</button>
@@ -1108,6 +1144,7 @@ export default function PatientDossier() {
   const [treatmentLoading, setTreatmentLoading] = useState(false);
   const [cancerError, setCancerError] = useState('');
   const [cancerLoading, setCancerLoading] = useState(false);
+  const [customFieldInvalidNames, setCustomFieldInvalidNames] = useState([]);
   const [showQR, setShowQR] = useState(false);
   const [toast, setToast] = useState('');
   const showToast = (msg, duration = 3000) => {
@@ -1156,6 +1193,7 @@ export default function PatientDossier() {
   const openCancerModal = () => {
     resetCancerForm();
     setCancerError('');
+    setCustomFieldInvalidNames([]);
     setShowCancerModal(true);
   };
 
@@ -1202,14 +1240,11 @@ export default function PatientDossier() {
     });
   };
 
-  const updateCancerCustomField = (id, name, value) => {
+  const updateCancerCustomField = (name, value) => {
+    setCustomFieldInvalidNames(prev => prev.filter(n => n !== name));
     setCancerForm(prev => ({
       ...prev,
-      customFields: {
-        ...(prev.customFields || {}),
-        [id]: value,
-        [name]: value,
-      },
+      customFields: { ...(prev.customFields || {}), [name]: value },
     }));
   };
 
@@ -1218,21 +1253,40 @@ export default function PatientDossier() {
       setCancerError('Le type ou l’organe du cancer est requis.');
       return;
     }
+    const diagnosticFields = await fetchActiveCustomFields('diagnostic');
+    const missingCustom = validateRequiredCustomFields(diagnosticFields, cancerForm.customFields);
+    if (missingCustom.length) {
+      setCustomFieldInvalidNames(
+        diagnosticFields
+          .filter(f => {
+            const v = cancerForm.customFields?.[f.name];
+            return f.is_required && (v === undefined || v === null || String(v).trim() === '');
+          })
+          .map(f => f.name)
+      );
+      setCancerError('Champs personnalisés obligatoires : ' + missingCustom.join(', '));
+      return;
+    }
     setCancerLoading(true);
     setCancerError('');
+    setCustomFieldInvalidNames([]);
     try {
       const tnmValue = [cancerForm.tnmT, cancerForm.tnmN, cancerForm.tnmM].filter(Boolean).join('');
       const payload = {
         ...cancerForm,
         tnm: tnmValue,
         cim10_code: cancerForm.cim10_code === '__manual__' ? (cancerForm.cim10_manual || '') : cancerForm.cim10_code,
-        custom_fields: cancerForm.customFields || {},
+        custom_fields: buildCustomFieldsPayload(cancerForm.customFields),
       };
       delete payload.tnmT;
       delete payload.tnmN;
       delete payload.tnmM;
       delete payload.cim10_manual;
       delete payload.customFields;
+      delete payload.consultDate;
+      delete payload.dernier_rdv;
+      delete payload.topo;
+      if (!payload.cancer_type) delete payload.cancer_type;
 
       await apiFetch(`/patients/${id}/cancers/`, {
         method: 'POST',
@@ -1295,6 +1349,9 @@ export default function PatientDossier() {
   );
 
   const age = calcAge(patient.date_naissance);
+  const dm = patient.dossier_manual || {};
+  const FAM_LABELS = { celibataire: 'Célibataire', marie: 'Marié(e)', divorce: 'Divorcé(e)', veuf: 'Veuf / Veuve' };
+  const COV_LABELS = { cnas: 'CNAS', casnos: 'CASNOS', pmsr: 'PMSR', aucune: 'Aucune', autre: 'Autre' };
   const dernierCancer = patient.cancers?.[0];
   const dernierStade = dernierCancer?.stade_clinique || dernierCancer?.stade_pathologique || null;
   const latestStatus = (dernierCancer?.status_history || []).slice().sort((a, b) => {
@@ -1344,6 +1401,21 @@ const medicalStatus = patient.death
           onSubmit={submitTreatment}
           loading={treatmentLoading}
           error={treatmentError}
+        />
+      )}
+
+      {showCancerModal && (
+        <AddCancerModal
+          patientId={id}
+          onClose={() => setShowCancerModal(false)}
+          onSaved={() => {}}
+          form={cancerForm}
+          onChange={updateCancerForm}
+          onCustomFieldChange={updateCancerCustomField}
+          onSubmit={submitCancer}
+          loading={cancerLoading}
+          error={cancerError}
+          customFieldInvalidNames={customFieldInvalidNames}
         />
       )}
 
@@ -1450,15 +1522,20 @@ const medicalStatus = patient.death
                 <InfoRow label="Sexe" value={patient.sexe === 'M' ? 'Masculin' : 'Féminin'} />
                 <InfoRow label="NIN" value={patient.national_id} accent />
                 <InfoRow label="Téléphone" value={patient.phone} />
-                <InfoRow label="Email" value={patient.email} />
-                <InfoRow label="Situation familiale" value={patient.situation_familiale} />
-                <InfoRow label="Profession" value={patient.profession} />
+                {dm.email && <InfoRow label="Email" value={dm.email} />}
+                {dm.situation_familiale && (
+                  <InfoRow label="Situation familiale" value={FAM_LABELS[dm.situation_familiale] || dm.situation_familiale} />
+                )}
+                {dm.couverture_sociale && (
+                  <InfoRow label="Couverture sociale" value={COV_LABELS[dm.couverture_sociale] || dm.couverture_sociale} />
+                )}
+                {dm.profession && <InfoRow label="Profession" value={dm.profession} />}
               </SectionCard>
 
               <SectionCard title="Localisation" icon="📍">
-                <InfoRow label="Wilaya" value={patient.wilaya_name || patient.wilaya_text || '—'} />
-                <InfoRow label="Commune" value={patient.commune_name || '—'} />
-                <InfoRow label="Adresse" value={patient.adresse || '—'} />
+                <InfoRow label="Wilaya" value={patient.wilaya_name || dm.wilaya || '—'} />
+                <InfoRow label="Commune" value={patient.commune_name || dm.commune || '—'} />
+                {dm.adresse && <InfoRow label="Adresse" value={dm.adresse} />}
                 <InfoRow label="Hôpital" value={patient.hospital_name || '—'} />
               </SectionCard>
 
@@ -1487,6 +1564,19 @@ const medicalStatus = patient.death
                 {patient.habits?.length > 0 ? (patient.habits.map((h, i) => (
                   <div key={i} style={s.habitRow}><div style={s.habitName}>{h.name}</div><div style={s.habitMeta}>{h.frequency || 'Fréquence inconnue'} · {h.duration_years ? `${h.duration_years} ans` : 'Durée inconnue'}</div></div>
                 ))) : <EmptyState icon="🌿" text="Aucune habitude de vie enregistrée." />}
+                {dm.sport && <InfoRow label="Activité physique" value={dm.sport} />}
+                {dm.alim && <InfoRow label="Alimentation" value={dm.alim} />}
+                {(dm.poids || dm.taille || dm.imc) && (
+                  <>
+                    {dm.poids && <InfoRow label="Poids" value={`${dm.poids} kg`} />}
+                    {dm.taille && <InfoRow label="Taille" value={`${dm.taille} cm`} />}
+                    {dm.imc && <InfoRow label="IMC" value={dm.imc} />}
+                  </>
+                )}
+                {dm.allergies && <InfoRow label="Allergies" value={dm.allergies} />}
+                {dm.autres_allergies && <InfoRow label="Autres allergies" value={dm.autres_allergies} />}
+                {dm.antecedents && <InfoRow label="Antécédents familiaux" value={dm.antecedents} />}
+                {dm.observations && <InfoRow label="Observations" value={dm.observations} />}
                 {patient.risk_factors?.length > 0 && (<div style={s.riskBox}><div style={s.riskTitle}>Facteurs de risque</div><div style={s.riskList}>{patient.risk_factors.map((r, i) => <span key={i} style={s.riskItem}>{r.name}</span>)}</div></div>)}
               </SectionCard>
 
@@ -1574,8 +1664,7 @@ const s = {
   breadcrumbSep: { color: '#C5D0E8' },
   breadcrumbCurrent: { color: '#1A2B4A', fontWeight: 700 },
   headerActions: { display: 'flex', gap: 10, alignItems: 'center' },
-   // ← زر QR في الهيدر — ستايل خاص
-  btnQR: { padding: '9px 18px', borderRadius: 30, border: 'none', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: "'Nunito', sans-serif", boxShadow: '0 4px 14px rgba(99,102,241,0.35)', display: 'flex', alignItems: 'center', gap: 6 },
+   // ← زر QR في ط§ظ„ظ‡يدر — ط³طھط§ظٹظ„ خاص
   heroSection: { maxWidth: 1080, margin: '24px auto 0', padding: '0 28px' },
   heroCard: { background: '#fff', borderRadius: 16, border: '1px solid #E8EDF5', padding: '24px 28px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, boxShadow: '0 2px 12px rgba(74,108,247,0.06)' },
   heroLeft: { display: 'flex', alignItems: 'flex-start', gap: 18, flex: 1 },
@@ -1597,7 +1686,6 @@ const s = {
   rdvNone: { fontSize: 12, color: '#C5D0E8', fontWeight: 600 },
   stadeBadge: { padding: '3px 10px', borderRadius: 20, fontSize: 12, fontWeight: 800 },
   emptyBadge: { color: '#C5D0E8', fontSize: 12 },
-  // Dans l'objet const s = { ... }
   btnQR: {
   display: 'flex', alignItems: 'center', gap: 6,
   padding: '9px 18px', borderRadius: 30, border: 'none',
@@ -1747,3 +1835,6 @@ const s = {
   btnPrimary: { padding: '10px 20px', borderRadius: 30, border: 'none', background: 'linear-gradient(135deg,#4A6CF7,#6B87FF)', color: '#fff', fontSize: 13, fontWeight: 800, cursor: 'pointer' },
   btnGhost: { padding: '10px 18px', borderRadius: 30, border: '1.5px solid #DDE4F3', background: '#F5F8FF', color: '#7A8BAD', fontSize: 13, fontWeight: 700 },
 };
+
+
+

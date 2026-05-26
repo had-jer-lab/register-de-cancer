@@ -319,6 +319,11 @@ export default function CustomFieldsPage({ search = '' }) {
   const [activeSection, setActiveSection] = useState('all');
   const [toast,       setToast]       = useState({ msg: '', type: 'success' });
 
+  const showToast = useCallback((msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
+  }, []);
+
   const loadFields = useCallback(async () => {
     setLoading(true);
     try {
@@ -329,14 +334,9 @@ export default function CustomFieldsPage({ search = '' }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   useEffect(() => { loadFields(); }, [loadFields]);
-
-  const showToast = (msg, type = 'success') => {
-    setToast({ msg, type });
-    setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
-  };
 
   const handleSave = async (formData) => {
     if (editField) {
@@ -433,9 +433,9 @@ export default function CustomFieldsPage({ search = '' }) {
             Ajoutez des champs sur mesure dans le formulaire de diagnostic des médecins
           </div>
         </div>
-        <button style={s.btnPrimary} onClick={() => setShowModal(true)}>
-          ➕ Nouveau champ
-        </button>
+        <button style={{ ...s.btnPrimary, flexShrink: 0 }} onClick={() => setShowModal(true)}>
+  ➕ Nouveau champ
+</button>
       </div>
 
       {/* Stats rapides */}

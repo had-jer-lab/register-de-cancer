@@ -27,10 +27,15 @@ class UserSerializer(serializers.ModelSerializer):
             'perm_stats':  {'write_only': False},
             'perm_import': {'write_only': False},
         }
-    def get_full_name(self, obj):
-        return f"{obj.prenom or ''} {obj.nom or ''}".strip() or obj.email
+
     def get_permissions(self, obj):
         return obj.permissions_list
+    def get_full_name(self, obj):
+        return f"{obj.prenom} {obj.nom}"
+
+    def get_full_name(self, obj):
+        """Return the user's display full name or email as fallback."""
+        return f"{obj.prenom or ''} {obj.nom or ''}".strip() or obj.email
 
     def create(self, validated_data):
         request = self.context.get('request')

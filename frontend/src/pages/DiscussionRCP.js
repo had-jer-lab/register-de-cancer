@@ -1,7 +1,8 @@
+import API_BASE from '../utils/apiConfig';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 // ─── API Helper ───────────────────────────────────────────────────────────────
-const API = 'http://localhost:8000/api/';
+const API = `${API_BASE}/`;
 
 async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('access_token');
@@ -74,7 +75,7 @@ function MyPatientsOverlay({ patients, rcpList, onClose, onSelectRcp, activeFilt
     { key:'ongoing',     items:grp.ongoing,     label:'En cours',                  topColor:'#48BB78', tagBg:'#C6F6D5', tagColor:'#276749' },
     { key:'today',       items:grp.today,       label:"📅 Aujourd'hui",               topColor:'#4A90E2', tagBg:'#EBF8FF', tagColor:'#2B6CB0' },
     { key:'week',        items:grp.week,        label:'📆 Cette semaine',             topColor:'#ED8936', tagBg:'#FEEBC8', tagColor:'#C05621' },
-    { key:'month',       items:grp.month,       label:'🗓 Ce mois',                   topColor:'#9F7AEA', tagBg:'#FAF5FF', tagColor:'#553C9A' },
+    { key:'month',       items:grp.month,       label:'📗 Ce mois',                   topColor:'#9F7AEA', tagBg:'#FAF5FF', tagColor:'#553C9A' },
     { key:'future',      items:grp.future,      label:'🔭 Mois suivants',             topColor:'#718096', tagBg:'#EDF2F7', tagColor:'#4a5568' },
     { key:'closedOk',    items:grp.closedOk,    label:'✅ Clôturées — décision prise',topColor:'#38A169', tagBg:'#F0FFF4', tagColor:'#276749' },
     { key:'closedNoDoc', items:grp.closedNoDoc, label:'⚠️ Clôturées — sans décision', topColor:'#E53E3E', tagBg:'#FFF5F5', tagColor:'#C53030' },
@@ -124,7 +125,7 @@ function MyPatientsOverlay({ patients, rcpList, onClose, onSelectRcp, activeFilt
     { key:'ongoing',     label:'En cours',      count:grp.ongoing.length },
     { key:'today',       label:"📅 Aujourd'hui",   count:grp.today.length },
     { key:'week',        label:'📆 Cette semaine', count:grp.week.length },
-    { key:'month',       label:'🗓 Ce mois',       count:grp.month.length },
+    { key:'month',       label:'📗 Ce mois',       count:grp.month.length },
     { key:'future',      label:'🔭 Mois suivants', count:grp.future.length },
     { key:'closedOk',    label:'✅ Avec décision', count:grp.closedOk.length },
     { key:'closedNoDoc', label:'⚠️ Sans décision', count:grp.closedNoDoc.length },
@@ -135,7 +136,7 @@ function MyPatientsOverlay({ patients, rcpList, onClose, onSelectRcp, activeFilt
     if (r.rapport_url) { window.open(r.rapport_url, '_blank'); return; }
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch('http://localhost:8000/api/rcp/' + r.id + '/rapport/', {
+      const res = await fetch(`${API}rcp/${r.id}/rapport/`, {
         headers: { Authorization: 'Bearer ' + token }
       });
       if (res.ok) {
@@ -178,7 +179,7 @@ function MyPatientsOverlay({ patients, rcpList, onClose, onSelectRcp, activeFilt
           )}
         </div>
         <div style={{ display:'flex', background:'#EDF2F7', borderRadius:9, padding:3, gap:2 }}>
-          {[['date','📅 Date'],['patient','🔤 Patient']].map(([k,l]) => (
+          {[['date','📅 Date'],['patient','👤 Patient']].map(([k,l]) => (
             <button key={k} onClick={() => setSortBy(k)}
               style={{ padding:'6px 12px', borderRadius:7, border:'none', fontSize:11, fontWeight:700, cursor:'pointer', transition:'all .15s',
                 background: sortBy===k ? 'white' : 'transparent',
@@ -624,7 +625,7 @@ export default function DiscussionRCP() {
     form.append('message', attachedFile.name);
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000/api/'}rcp/${selectedRcp.rcp_id}/chat/`, {
+      const res = await fetch(`${API}rcp/${selectedRcp.rcp_id}/chat/`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: form,
@@ -683,7 +684,7 @@ export default function DiscussionRCP() {
       form.append('message', attachedImage.name);
       const token = localStorage.getItem('access_token');
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:8000/api/'}rcp/${selectedRcp.rcp_id}/chat/`,
+        `${API}rcp/${selectedRcp.rcp_id}/chat/`,
         { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form }
       );
       if (res.ok) {
@@ -905,7 +906,7 @@ export default function DiscussionRCP() {
           <div style={s.pfCardHeader}>1 — Infos personnelles</div>
           <div style={s.pfRow}><span style={s.pfLabel}>Nom</span><span style={s.pfVal}>{p?.full_name || selectedRcp.patient}</span></div>
           <div style={s.pfRow}><span style={s.pfLabel}>Date de naissance</span><span style={s.pfVal}>{p?.date_naissance || '—'}</span></div>
-          <div style={s.pfRow}><span style={s.pfLabel}>Âge</span><span style={s.pfVal}>{p?.age ?? selectedRcp.age} ans</span></div>
+          <div style={s.pfRow}><span style={s.pfLabel}>أ‚ge</span><span style={s.pfVal}>{p?.age ?? selectedRcp.age} ans</span></div>
           <div style={s.pfRow}><span style={s.pfLabel}>Sexe</span><span style={s.pfVal}>{p?.sexe === 'M' ? '🧑 Masculin' : p?.sexe === 'F' ? '👩 Féminin' : '—'}</span></div>
           <div style={s.pfRow}><span style={s.pfLabel}>N° Dossier</span><span style={{ ...s.pfVal, fontFamily:'monospace', fontSize:11 }}>{p?.numero_dossier || selectedRcp.numero_dossier}</span></div>
           {p?.phone      && <div style={s.pfRow}><span style={s.pfLabel}>Téléphone</span><span style={s.pfVal}>{p.phone}</span></div>}
@@ -938,7 +939,7 @@ export default function DiscussionRCP() {
                 <div style={s.pfRow}>
                   <span style={s.pfLabel}>Envah. vasc.</span>
                   <span style={{ ...s.pfVal, color: cancer.histology.envahissement_vasculaire ? '#C53030' : '#276749' }}>
-                    {cancer.histology.envahissement_vasculaire ? '✔ Oui' : '✘ Non'}
+                    {cancer.histology.envahissement_vasculaire ? '✔ Oui' : '✗ Non'}
                   </span>
                 </div>
               )}
@@ -1163,7 +1164,7 @@ export default function DiscussionRCP() {
                     <input type="datetime-local" style={s.input} value={meetingDatetime} onChange={e => setMeetingDatetime(e.target.value)} />
                   </div>
                   <div style={s.fieldGroup}>
-                    <label style={s.fieldLabel}>📝 Raison de présentation</label>
+                    <label style={s.fieldLabel}>📌 Raison de présentation</label>
                     <textarea rows={2} style={{ ...s.input, resize:'none' }} placeholder="Ex: Tumeur 4.2cm, stade avancé..." value={presentationReason} onChange={e => setPresentationReason(e.target.value)} />
                   </div>
                   <div style={s.fieldGroup}>
@@ -1952,3 +1953,9 @@ const s = {
   lightboxClose:  { position:'absolute', top:-16, right:-16, width:36, height:36, borderRadius:'50%', border:'none', background:'white', color:'#2d3748', fontSize:16, fontWeight:700, cursor:'pointer', boxShadow:'0 4px 12px rgba(0,0,0,.3)', display:'flex', alignItems:'center', justifyContent:'center' },
   lightboxDownload:{ padding:'9px 22px', background:'white', color:'#4A90E2', borderRadius:10, fontSize:13, fontWeight:700, textDecoration:'none', boxShadow:'0 4px 14px rgba(0,0,0,.2)' },
 };
+
+
+
+
+
+

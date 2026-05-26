@@ -3,17 +3,17 @@ from pathlib import Path
 from decouple import config
 from datetime import timedelta
 
-BASE_DIR = Path(__file__).resolve().parent.parent  # ✅ أولاً
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Adresse IP locale utilisée pour permettre l'accès depuis un téléphone sur le LAN
-# Configurez `DEV_LOCAL_IP` dans votre .env si besoin (ex: 192.168.1.8)
+# ─── ENV ────────────────────────────────────────────────────────────────────
 DEV_LOCAL_IP = config('DEV_LOCAL_IP', default='')
+SECRET_KEY   = config('SECRET_KEY', default='django-insecure-temporary-key-for-dev')
+DEBUG        = config('DEBUG', cast=bool, default=True)
 
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-temporary-key-for-dev')
-DEBUG = config('DEBUG', cast=bool, default=True)
+# ─── HOSTS ──────────────────────────────────────────────────────────────────
 ALLOWED_HOSTS = ['*']
 
-
+# ─── APPS ───────────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,18 +25,19 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'django_filters',
+    'django_apscheduler',
     # Apps
     'accounts',
     'patients',
     'statistic',
-    'django_filters',
     'rcp',
-    'django_apscheduler',
-    
 ]
 
+# ─── MIDDLEWARE ──────────────────────────────────────────────────────────────
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',          # ← لازم يكون أول واحد
+    'config.middleware.RawBodyLoggingMiddleware',      # ← من الملف 2
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -66,14 +67,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# ─── DATABASE ────────────────────────────────────────────────────────────────
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 AUTH_USER_MODEL = 'accounts.User'
 
+# ─── DRF + JWT ───────────────────────────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -88,14 +92,15 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
+# ─── CORS ────────────────────────────────────────────────────────────────────
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True   # dev only — غير في production
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 
-# Allow credentials and all headers for development
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # For development only
 CORS_ALLOWED_HEADERS = [
     'accept',
     'accept-encoding',
@@ -106,26 +111,21 @@ CORS_ALLOWED_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
-    "http://192.168.1.9:3000",
 ]
 
-# If a DEV_LOCAL_IP is configured, allow it as well (useful for mobile testing on LAN)
-if DEV_LOCAL_IP:
-    try:
-        # basic validation: avoid adding localhost duplicates
-        if DEV_LOCAL_IP not in ('localhost', '127.0.0.1'):
-            CORS_ALLOWED_ORIGINS.append(f"http://{DEV_LOCAL_IP}:3000")
-    except Exception:
-        pass
+# LAN mobile testing
+if DEV_LOCAL_IP and DEV_LOCAL_IP not in ('localhost', '127.0.0.1'):
+    CORS_ALLOWED_ORIGINS.append(f"http://{DEV_LOCAL_IP}:3000")
 
+# ─── LOCALISATION ────────────────────────────────────────────────────────────
 LANGUAGE_CODE = 'fr-fr'
-TIME_ZONE = 'Africa/Algiers'
-USE_I18N = True
-USE_TZ = True
+TIME_ZONE     = 'Africa/Algiers'
+USE_I18N      = True
+USE_TZ        = True
 
+# ─── STATIC & MEDIA ──────────────────────────────────────────────────────────
 STATIC_URL = '/static/'
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# ✅ Media files — بعد BASE_DIR
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

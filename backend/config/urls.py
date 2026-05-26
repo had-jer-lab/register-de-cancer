@@ -1,18 +1,24 @@
-# ══════════════════════════════════════════
 # config/urls.py
-# ══════════════════════════════════════════
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from patients.views import PatientFormView
+from django.shortcuts import redirect
+
+
+def patient_form_redirect(request, id):
+    host = request.get_host().split(':')[0]
+    return redirect(f'http://{host}:3000/patient-form/{id}')
+
+
 urlpatterns = [
     path('admin-panel/', admin.site.urls),
-    path('api/auth/',    include('accounts.urls')),
-    path('api/patients/',include('patients.urls')),
-    path('api/statistic/', include('statistic.urls')),
-    path('api/', include('patients.urls')),  # ← هاد خاص يكون موجود
-    path('api/patient-form/<uuid:token>/', PatientFormView.as_view(), name='patient-form'),  # ✅ زيد هاد
 
-    path('api/rcp/',     include('rcp.urls')),
+    path('api/auth/',      include('accounts.urls')),
+    path('api/patients/',  include('patients.urls')),
+    path('api/rcp/',       include('rcp.urls')),
+    path('api/statistic/', include('statistic.urls')),
+
+    path('patient-form/<uuid:id>/', patient_form_redirect, name='patient-form-redirect'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

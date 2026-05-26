@@ -142,7 +142,7 @@ function FilterPanel({
         </div>
       </div>
 
-      {/* Genre et Âge */}
+      {/* Genre et أ‚ge */}
       <div style={styleGrid}>
         <div>
           <label style={styleLabel}>👥 Genre</label>
@@ -164,10 +164,10 @@ function FilterPanel({
             style={styleSelect}
           >
             <option value="">Tous les âges</option>
-            <option value="0–14">0–14 ans</option>
-            <option value="15–29">15–29 ans</option>
-            <option value="30–44">30–44 ans</option>
-            <option value="45–59">45–59 ans</option>
+            <option value="0-14">0-14 ans</option>
+            <option value="15-29">15-29 ans</option>
+            <option value="30-44">30-44 ans</option>
+            <option value="45-59">45-59 ans</option>
             <option value="60+">60+ ans</option>
           </select>
         </div>

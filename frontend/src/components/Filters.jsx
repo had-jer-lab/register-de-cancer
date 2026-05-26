@@ -20,7 +20,7 @@ const Filters = ({ filters, onChange, allWilayas, allDairas, allCancers, availab
         <label style={{ fontSize: 11, marginBottom: 5, display: 'block', color: '#475569' }}>Tranche d'âge</label>
         <select value={filters.age} onChange={handleInput('age')} style={{ width: '100%', borderRadius: 8, border: '1.5px solid #cbd5e1', padding: '8px 10px' }}>
           <option value="">Tous</option>
-          {['0–14', '15–29', '30–44', '45–59', '60+'].map((o) => <option key={o} value={o}>{o}</option>)}
+          {['0-14', '15-29', '30-44', '45-59', '60+'].map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
       </div>
       <div>

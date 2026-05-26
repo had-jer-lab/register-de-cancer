@@ -3,7 +3,7 @@
  * 
  * RAW_DATA: Array<{
  *   cancer: string (ex: "sein", "prostate")
- *   age: string (ex: "30–44", "60+")
+ *   age: string (ex: "30-44", "60+")
  *   sex: string ("M" | "F")
  *   year: number (2018-2026)
  *   month: string (ex: "Jan", "Fév")
@@ -44,7 +44,7 @@
  *   yearStart: string (ex: "2018")
  *   yearEnd: string (ex: "2026")
  *   sex: "" | "M" | "F"
- *   age: "" | "0–14" | "15–29" | "30–44" | "45–59" | "60+"
+ *   age: "" | "0-14" | "15-29" | "30-44" | "45-59" | "60+"
  *   cancer: "" | cancer_id
  *   wilaya: "" | wilaya_name
  *   daira: "" | daira_name (si Tlemcen sélectionné)

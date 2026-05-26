@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatisticsEditor from './Statistics';
+import CustomFieldsPage from './CustomFieldsPage'; // ← كيفاش سميتي الملف
 
 // ─── API Helper ───────────────────────────────────────────────────────────────
-const API = 'http://localhost:8000/api/auth';
+import API_BASE from '../utils/apiConfig';
+
+const API = `${API_BASE}/auth`;
 
 async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('access_token');
@@ -21,6 +24,69 @@ async function apiFetch(path, options = {}) {
   return res.json();
 }
 
+// ─── Wilayas & Communes ───────────────────────────────────────────────────────
+const WILAYAS_COMMUNES = {
+  'Adrar':['Timekten','Bouda','Ouled Ahmed Timmi','Adrar','Fenoughil','In Zghmir','Reggane','Sali','Sebaa','Tsabit','Tamest','Tamantit','Tit','Zaouiet Kounta','Akabli','Aoulef'],
+  'Chlef':['Talassa','Zeboudja','El Hadjadj','Ouled Ben Abdelkader','Ain Merane','Breira','Ouled Abbes','Oued Fodda','Beni Rached','Herenfa','Tadjena','El Marsa','Chlef','Oum Drou','Sendjas','Sidi Abderrahmane','Sidi Akkacha','Tenes','Beni  Bouattab','El Karimia','Harchoun','Bouzeghaia','Taougrit','Beni Haoua','Abou El Hassane','Oued Goussine','Chettia','Moussadek','Ouled Fares','Boukadir','Oued Sly','Sobha','Benairia','Labiod Medjadja','Dahra'],
+  'Laghouat':['El Beidha','Gueltat Sidi Saad','Brida','Ain Sidi Ali','Tadjemout','Hadj Mechri','Taouiala','El Ghicha','Tadjrouna','Sebgag','Sidi Bouzid','Oued Morra','Laghouat',"Oued M'zi",'Ksar El Hirane','El Assafia','Sidi Makhlouf','Hassi Delaa',"Hassi R'mel",'Ain Madhi','El Haouaita','Kheneg','Benacer Benchohra'],
+  'Oum El Bouaghi':['Ain Babouche','Ain Beida','Ain Diss','Ain Fakroun','Ain Kercha','Ain Mlila','Ain Zitoun','Behir Chergui','Bir Chouhada','Dhalaa','El Amiria','El Belala','El Djazia','El Fedjoudj','El Harmilia','El Harrouche','Fkirina','Hanchir Toumghani','Ksar Sbahi','Meskiana','Oued Nini','Oum El Bouaghi','Rahia','Sigus','Souk Naamane','Zorg'],
+  'Batna':['Abdelkader Azil','Ain Djasser','Ain Touta','Ain Yagout','Arris','Barika','Batna','Beni Foudhala El Hakania','Boulhilet','Boumagueur','Bouzina','Chemora','Chir','Djerma','El Hassi','El Madher','Fesdis','Foum Toub','Ghassira','Gosbat','Guigba','Hidoussa','Ichmoul','Inoughissen','Kimmel','Ksar Bellezma','Lazrou','Lemsane','Maafa','Merouana','Menaa','Metkaouak','N\'gaous','Ngaous','Nouader','Oued Chaaba','Oued El Ma','Ouyoun El Assafir','Ras El Aioun','Rhass','Seggana','Seriana','Sefiane','Talkhamt','Tazoult','Theniet El Abed','Tiklatine','Timgad','Tixter','Tigherghar','Tighanimine','Boumia','Oued Taga','Lazrou','Zanat El Beida'],
+  'Béjaïa':['Adekar','Akbou','Amalou','Amizour','Aokas','Barbacha','Bejaia','Beni Djellil','Beni Ksila','Beni Maouche','Beni Mellikeche','Boukhelifa','Chemini','Darguina','Draa El Gaied','El Kseur','Feraoun','Fenaia Ilmaten','Ighil Ali','Ighram','Kherrata','Leflaye','Melbou','Oued Ghir','Ouzellaguene','Seddouk','Semaoune','Sigda','Souk El Tenine','Souk Oufella','Taourirt Ighil','Taskriout','Tifra','Tichy','Toudja'],
+  'Biskra':['Ain Naga','Ain Zaatout','Biskra','Bordj Ben Azzouz','Branis','Chetma','Djemorah','Doucen','El Ghrous','El Hadjeb','El Kantara','El Outaya','Foughala','Lioua','Lichana','M\'Chouneche','Mekhadma','Meziraa','Oued Djellal','Ouled Djellal','Ras El Miad','Sidi Khaled','Sidi Okba','Tolga','Zeribet El Oued'],
+  'Béchar':['Abadla','Ain Skhouna','Beni Ikhlef','Bechar','Boukais','El Ouata','Igli','Kenadsa','Lahmar','Mechraa Houari Boumediene','Meridja','Mogheul','Oulad Khodeir','Tabelbala','Taghit','Timoudi'],
+  'Blida':['Ain Romana','Beni Tamou','Blida','Bougara','Boufarik','Bouinan','Bou Arfa','Chebli','Chiffa','Chrea','Djebabra','El Affroun','Guerrouaou','Hammam Melouane','Larbaa','Meftah','Mouzaia','Oued Djer','Ouled Yaich','Soumaa'],
+  'Bouira':['Aghbalou','Ain Bessem','Ain Laloui','Ain Turk','Ait Laaziz','Bechloul','Bir Ghbalou','Bordj Okhriss','Bouira','Bouderbala','Chorfa','Dechmia','Dirrah','El Adjiba','El Asnam','El Hachimia','El Khabouzia','El Mokrani','Guerrouma','Hadjera Zerga','Hanif','Kadiria','Lakhdaria','M\'Chedallah','Maala','Mezdour','Oued El Berdi','Ouled Rached','Raouraoua','Ridane','Souk El Khemis','Sour El Ghozlane','Taguedit','Taghzout'],
+  'Tamanrasset':['Abalessa','Ain Salah','Ain Guezzam','Foggaret Ez Zoua','Ideles','In Amenas','In Guezzam','In Salah','Tazrouk','Tamanrasset','Tin Zaouatine'],
+  'Tébessa':['Ain Zerga','Bekkaria','Bir Dheheb','Bir El Ater','Cheria','El Aouinet','El Houidjbet','El Kouif','El Malabiod','El Meridj','El Ogla','Ferkane','Hammamet','Morsott','Negrine','Oum Ali','Bir El Ater','Stah Guentis','Tebessa','Tlidjane','Yabous'],
+  'Tlemcen':['Ain Fezza','Ain Ghoraba','Ain Kebira','Ain Nehala','Ain Tallout','Ain Youcef','Azails','Bab El Assa','Beni Bahdel','Beni Boussaid','Beni Mester','Beni Ouarsous','Beni Snous','Bouhlou','Chetouane','Dar Yaghmoracene','El Gor','El Aricha','Fellaoucene','Ghazaouet','Hammam Boughrara','Hennaya','Honaine','Iferhounene','Maghnia','Mansourah','Marsa Ben M\'Hidi','Msirda Fouaga','Nedroma','Ouled Mimoun','Remchi','Sabra','Sebdou','Sidi Abdelli','Sidi Djillali','Sidi Medjahed','Souahlia','Souani','Terny Beni Hdiel','Tlemcen','Zenata'],
+  'Tiaret':['Ain Bouchekif','Ain Deheb','Ain El Hadid','Ain Kermes','Ain Kerouane','Ain Zarit','Amoura','Bougara','Chehaida','Dahmouni','Djillali Ben Amar','El Hammadia','Faidja','Frenda','Guertoufa','Hamadia','Ksar Chellala','Mahdia','Medrissa','Mechraa Safa','Meghila','Mellakou','Nadorah','Oued Lilli','Rahouia','Rechaiga','Rosfa','Sebaine','Sebt','Serghine','Si Abdelghani','Sidi Abderrahmane','Sidi Ali Mellal','Sidi Bakhti','Sidi Hosni','Sougueur','Tagdemt','Takhemaret','Tiaret','Tousnina','Zmalet El Emir Abdelkader'],
+  'Tizi Ouzou':['Abi Youcef','Aghribs','Ain El Hammam','Ain Zaouia','Ait Aggouacha','Ait Aissa Mimoun','Ait Boumahdi','Ait Chafaa','Ait Khelili','Ait Mahmoud','Ait Oumalou','Ait Toudert','Ait Yahia','Ait Yahia Moussa','Akerrou','Akbil','Akerrou','Alma','Amalaz','Ath Zmenzer','Azeffoun','Beni Aissi','Beni Douala','Beni Yenni','Beni Zmenzer','Boghni','Bou Adda','Bouzeguene','Draa Ben Khedda','Draa El Mizan','Freha','Frikat','Iferhounene','Iflissen','Illilten','Iloula Oumalou','Irdjen','Larbaa Nath Irathen','Maatkas','Makouda','Mekla','Mekla','Mizrana','Nait Chabane','Ouacif','Ouaguenoun','Oued Aissi','Ouadhias','Sahel','Souk El Thenine','Taddart','Tafoughalt','Tigzirt','Tirmitine','Tizi Ghennif','Tizi Gheniff','Tizi Ouzou','Tizi Rached','Yakourene','Zekri'],
+  'Alger':['Ain Benian','Ain Taya','Alger Centre','Bab El Oued','Bab Ezzouar','Bains Romains','Baraki','Ben Aknoun','Beni Messous','Bir Mourad Rais','Bir Touta','Birtouta','Birkhadem','Bordj El Bahri','Bordj El Kiffan','Bouzareah','Casbah','Cheraga','Dar El Beida','Dely Brahim','Douera','Draria','El Achour','El Biar','El Harrach','El Marsa','El Mouradia','El Madania','Eucalyptus','Gue De Constantine','Hammamet','Heraoua','Hussein Dey','Khraicia','Kouba','Les Eucalyptus','Mahelma','Mohamed Belouizdad','Mohammadia','Oued Koriche','Ouled Chebel','Raiss Hamidou','Reghaïa','Rouiba','Saoula','Sidi Moussa','Souidania','Tessala El Merdja','Zeralda'],
+  'Djelfa':['Ain El Ibel','Ain Maabed','Ain Oussera','Aoun El Assel','Ben Srour','Birine','Birkine','Bouira Lahdab','Charef','Dar Chioukh','Deldoul','Djelfa','Douis','El Guedid','El Idrissia','El Khemis','Faidh El Botma','Had Sahary','Hassi Bahbah','Hassi El Euch','Hassi Fedoul','Ismail','Jijelida','Kef Lakhdar','Lakhdariya','Messaad','Ml\'iliha','Oum Laadham','Sed Rahal','Selmana','Sidi Baizid','Sidi Ladjel','Zaafrane','Zelmat','Zaccar'],
+  'Jijel':['Ain Makhlouf','Bouchelaghem','Bordj T\'Har','Chahna','Chekfa','Djimla','El Ancer','El Aouana','El Milia','Emir Abdelkader','Eraguene','Erraguene','Ghebala','Jijel','Kaous','Kemir','Ouadjana','Ouled Rabah','Selma Benziada','Settara','Sidi Abdelaziz','Sidi Marouf','Taher','Texenna','Ziama Mansouria'],
+  'Sétif':['Ain Azel','Ain El Kebira','Ain Lahdjar','Ain Oulmene','Ain Roua','Ain Sebt','Ait Naoual Mezada','Ait Tizi','Amoucha','Bazer Sakhra','Belaa','Beni Aziz','Beni Ourtilane','Beni Mouhli','Bir El Arch','Bir Haddada','Bouandas','Bougaa','Boutaleb','Dehamcha','Djemila','Draa Kebila','El Eulma','El Ouldja','El Ouricia','Guidjel','Guellal','Guenzet','Guergour','Hammam Guergour','Hammam Soukhna','Harbil','Hamma','Ksar El Abtal','Maaouia','Maouaklane','Mezloug','N\'gaous','Ouled Si Ahmed','Ouled Tebben','Oum Laadham','Rasfa','Robbah','Salah Bey','Serdj El Ghoul','Sétif','Tachouda','Talaifacene','Taya','Tizi N\'Bechar'],
+  'Saïda':['Ain El Hadjar','Ain Soltane','Doui Thabet','El Hassasna','El Houanet','Maamora','Moulay Larbi','Ouled Brahim','Ouled Khaled','Rebahia','Saida','Sidi Ahmed','Sidi Boubekeur','Sidi Amar','Tircine'],
+  'Skikda':['Ain Bouziane','Ain Charchar','Ain Kechra','Azzaba','Beni Bechir','Beni Zid','Bekkouche Lakhdar','Bouchtata','Collo','Djendel Saadi Mohamed','El Hadaik','El Harrouch','Emdjez Edchich','Filfila','Ghedir Sahridj','Hamadi Krouma','Kanoua','Kerkera','Kheneg Mayoum','Oued Zhour','Ouled Attia','Ouled Hbaba','Rabta','Ramdane Djamel','Salah Bouchaour','Sidi Mezghiche','Skikda','Tamalous','Taourga','Zerdezas','Zitouna'],
+  'Sidi Bel Abbès':['Ain Adden','Ain El Berd','Ain Kada','Ain Thrid','Ain Tindamine','Amarnas','Badredine El Mokrani','Ben Badis','Bir El Hammam','Boukhanifis','Chouala','Dhaya','El Hacaiba','El Haçaiba','Hassi Dahou','Hassi Zahana','Lamtar','Makedra','Marhoum','Mcid','Merine','Mezaourou','Mostefa Ben Brahim','Moulay Slissen','Oued Sebaa','Oued Taourira','Ras El Ma','Redjem Demouche','Sfisef','Sidi Bel Abbes','Sidi Brahim','Sidi Chaib','Sidi Daho Des Zairs','Sidi Hamadouche','Sidi Khaled','Sidi Lahcene','Sidi Yacoub','Tafissour','Taoudmout','Tessala','Tilmouni','Zerouala'],
+  'Annaba':['Ain Berda','Annaba','Berrahal','Cheurfa','Chetaibi','El Bouni','El Eulma','El Hadjar','Eulma','Seraidi','Sidi Amar','Treat'],
+  'Guelma':['Ain Ben Beida','Ain Hessainia','Ain Larbi','Ain Makhlouf','Ain Reggada','Ain Sandel','Belkheir','Ben Djarah','Beni Mezline','Bordj Sabat','Bouati Mahmoud','Bouhamdane','Bouchegouf','Dahouara','Djebala Khemissi','El Fedjoudj','Guelaat Bou Sbaa','Guelma','Hammam Debagh','Hammam N\'Bails','Heliopolis','Houari Boumediene','Khezaras','Medjez Amar','Medjez Sfa','Nechmaya','Oued Fragha','Oued Zenati','Ras El Agba','Roknia','Sellaoua Announa','Tamlouka'],
+  'Constantine':['Ain Abid','Ain Smara','Beni Hamidane','Constantine','El Khroub','Hamma Bouziane','Ibn Badis','Ibn Ziad','Messaoud Boudjriou','Ouled Rahmoune','Zighoud Youcef'],
+  'Médéa':['Ain Boucif','Ain Ouksir','Aziz','Berrouaghia','Bir Ben Laabed','Boghar','Bouaichoune','Bouchrahil','Boughezoul','Bouskene','Chelalet El Adhaoura','Cheniguel','Deux Bassins','Djouab','El Azizia','El Guelb El Kebir','El Hamdania','El Omaria','El Oued','Hannacha','Kef Lakhdar','Khams Djouamaa','Ksar El Boukhari','Maghraoua','Medea','Meghraoua','Mezerana','Meftaha','Mihoub','Ouamri','Oued Harbil','Oued Harbil','Oued Mellal','Ouled Antar','Ouled Bouachra','Ouled Daid','Ouled Maaref','Ouled Slama','Oum El Djalil','Ouzera','Rebaia','Sedraia','Seghouane','Si Mahdjoub','Sidi Damed','Sidi Errabia','Sidi Naamane','Sidi Zahar','Soumaa','Tafraout','Tamesguida','Tarmount','Tablat','Tizi Mahdi'],
+  'Mostaganem':['Achaacha','Ain Boudinar','Ain Nouissy','Ain Sidi Cherif','Ain Tadles','Bouguirat','El Hassiane','Fornaka','Hadjadj','Khadra','Kheireddine','Mansourah','Mazagran','Mesra','Mostaganem','Nekmaria','Ouled Boughalem','Ouled Maallah','Safsaf','Sayada','Sidi Ali','Sidi Bellatar','Sidi Lakhdar','Sirat','Souaflia','Stidia','Tazgait','Touahria'],
+  "M'Sila":['Ain El Melh','Ain El Hadjel','Ain Errich','Ain Fares','Ain Khadra','Ain Lahdjel','Aouf','Belaiba','Ben Srour','Benzouh','Berhoum','Bou Saada','Bouti Saour','Chellal','Dehahna','Djebel Messaad','El Hamel','El Houamed','Hammam Dalaa','Hammam Dhalaa','Khoubana','Ksar El Hirane','Ksiba','Lakahal','Lehdjel','M\'Cif','M\'Sila','Maadid','Magra','Maarif','Medjedel','Menaa','Moudjebara','Ouanougha','Ouled Addi Guebala','Ouled Attia','Ouled Derradj','Ouled Mansour','Ouled Slimane','Oultene','Sidi Aissa','Sidi M\'Hamed','Sidi Mansour','Slim','Souamaa','Tamsa','Tarmount','Zarzour'],
+  'Mascara':['Ain Fekan','Ain Fares','Ain Fras','Ain Itekki','Ain Frass','Bou Hanifia','Chorfa','El Bordj','El Ghomri','El Hachem','El Keurt','Ferraguig','Froha','Ghriss','Guerdjoum','Hachem','Khalouia','Makdha','Mascara','Matemore','Mohammadia','Moctadoua','Moh Lamine','Nesmoth','Oggaz','Oued Taria','Ouillis','Sidi Abdeldjebar','Sidi Boussaid','Sidi Kada','Sig','Tighennif','Tizi','Zetema','Zahana'],
+  'Ouargla':['Ain Beida','El Borma','El Hadjira','El Alia','Hassi Messaoud','In Amenas','Megarine','N\'goussa','Nezla','Ouargla','Rouissat','Sidi Khouiled','Taibet','Temacine','Tebesbest','Touggourt','Zaouia El Abidia'],
+  'Oran':['Ain El Bya','Ain El Turk','Ain El Bia','Ain Kerma','Arzew','Ben Freha','Bethioua','Bir El Djir','Bousfer','Boutlelis','Cap Falcon','El Ançor','El Hassi','El Karma','Es Senia','Gdyel','Hassi Ben Okba','Hassi Mefsoukh','Mers El Hadjadj','Messerghine','Misserghin','Oued Tlelat','Oran','Sidi Ben Yebka','Sidi Chahmi','Sidi Marouf','Sin El Kbir','Tafraoui'],
+  'El Bayadh':['Ain El Orak','Arbaouat','Boualem','Bougtoub','Cheguig','El Abiodh Sidi Cheikh','El Bayadh','El Bnoud','El Hammamat','Ghassoul','Kef El Ahmar','Krakda','Rogassa','Sidi Ameur','Sidi Slimane','Sidi Tifour','Stitten','Tousmouline'],
+  'Illizi':['Bordj El Haouasse','Debdeb','Illizi','In Amenas','Djanet'],
+  'Bordj Bou Arréridj':['Ain Taghrout','Azelev','Belimour','Bir Kasdali','Bordj Bou Arreridj','Bordj Ghedir','Bordj Zemoura','Djaafra','El Achir','El Anseur','El Main','El M\'hir','Ghilassa','Hasnaoua','Khelil','Ksour','Mansourah','Medjana','Ouled Braham','Ouled Dahmane','Ouled Sidi Ibrahim','Ras El Oued','Ravine','Ridane','Sidi Embarek','Taglait','Teniet En Nasr','Telidjen','Tixter'],
+  'Boumerdès':['Beni Amrane','Bordj Menaiel','Boumerdas','Boudouaou','Boudouaou El Bahri','Boumerdes','Corso','Dellys','Djinet','El Kharrouba','Hammedi','Issers','Khemis El Khechna','Kirata','Larbatache','Leghata','Naciria','Ouled Aissa','Ouled Hedadj','Ouled Moussa','Si Mustapha','Souk El Had','Sidi Daoud','Taourga','Thenia','Tidjelabine','Zemmouri'],
+  'El Tarf':['Ain Assel','Ain El Assel','Ain Kerma','Ben Mehidi','Berrihane','Besbes','Bougous','Bouteldja','Chbaita Mokhtar','Chebaita Mokhtar','Chihani','Dréan','El Aioun','El Kala','El Tarf','Hammam Beni Salah','Lac Des Oiseaux','Ouled Haddadj','Raml Souk','Souarekh','Zerizer','Zitouna'],
+  'Tindouf':['Tindouf'],
+  'Tissemsilt':['Ammari','Beni Chaib','Beni Lahcene','Bordj El Emir Khaled','Bordj Bou Naama','Boucaid','Khemisti','Lazharia','Lardjem','Layoune','Maalem Hanafi','Melaab','Ouled Bessem','Sidi Abed','Sidi Boutouchent','Sidi Lantri','Sidi Slimane','Theniet El Had','Tissemsilt','Youssoufia'],
+  'El Oued':['Bayadha','ط¨ط¨ط§ظ†ة','Ben Guecha','Djamaa','Douar El Ma','El Mghair','El Oued','Guemar','Hamraia','Hassi Khalifa','Kouinine','Magrane','Mih Ouansa','Nakhla','Ourmas','Reguiba','Robbah','Sidi Aoun','Sidi Khelil','Still','Taghzout','Taleb Larbi','Tendla','Trifaoui'],
+  'Khenchela':['Ain Touila','Babar','Baghai','Bouhmama','Chechar','Djellal','El Hamma','El Oueldja','Ensigha','Kais','Kaïs','Khenchela','Khirane','Mchouneche','Ouled Rechache','Remila','Taouziant','Yabous'],
+  'Souk Ahras':['Ain Soltane','Ain Zana','Bir Bouhouche','Drea','Haddada','Hannach','Khedara','Khemissa','Merahna','M\'Daourouch','Ouled Driss','Ouled Moumen','Ragouba','Safel El Ouiden','Sedrata','Sidi Fredj','Souk Ahras','Taoura','Terraguelt','Tiffech','Zarouria'],
+  'Tipaza':['Aghabal','Ahmer El Ain','Ain Tagourait','Attatba','Bou Ismail','Bourkika','Cherchell','Damous','El Hadjout','Fouka','Gouraya','Hadjout','Kolea','Larhat','Marengo','Meurad','Menaceur','Messelmoun','Nador','Sidi Amar','Sidi Ghiles','Sidi Rached','Sidi Semiane','Sidi Semiane','Tipaza','Zeroudah'],
+  'Mila':['Ahmed Rachedi','Ain Beida Harriche','Ain El Mehdi','Ain Mellouk','Ain Tine','Amira Arras','Benyahia Abderrahmane','Bouhatem','Chelghoum Laid','Chigara','Dar Lecheikh','Dehamcha','El Mechira','Ferdjioua','Grarem Gouga','Hamala','Mila','Oued Athmania','Oued Endja','Oued Seguen','Rouached','Sidi Khelifa','Sidi Merouane','Tadjenanet','Teleghma','Tessala Lemtai','Tiberguent','Timagourine','Telerghma','Zeghaia'],
+  'Aïn Defla':['Ain Benian','Ain Defla','Ain Lechiekh','Ain Soltane','Ain Torki','Ain Trik','Barbouche','Belaas','Bir Ould Khelifa','Bordj Emir Khaled','Boumedfaa','Bourached','Djelida','Djendel','El Abadia','El Amra','El Attaf','El Hassania','El Maine','Hammam Righa','Hoceinia','Khemis Miliana','Mekhatria','Miliana','Moulay Slissen','Oued Chorfa','Oued Djemaa','Oued El Djemaa','Oued Rouina','Ouellit','Rouina','Sidi Lakhdar','Tacheta Zougagha','Tarik Ibn Ziyad','Tiberkanine','Zeddine'],
+  'Naâma':['Ain Ben Khelil','Ain Sefra','Asla','Djeniene Bourezg','El Biodh','Kasdir','Makman Ben Amer','Mecheria','Moghrar','Naama','Sfissifa','Tiout'],
+  'Aïn Témouchent':['Aghlal','Ain El Arbaa','Ain Kihal','Ain Lachrak','Ain Kihel','Ain Temouchent','Ain Tolba','Aïn Temouchent','Beni Saf','Chaabat El Leham','El Amria','El Emir Abdelkader','El Malah','El Messaid','Hammam Bou Hadjar','Hassi El Ghella','Louza','Oued Berkeche','Oued Sabah','Oulhassa El Gheraba','Ras El Ma','Sidi Ben Adda','Sidi Boumediene','Sidi Ouriach','Sidi Safi','Terga','Tizi'],
+  'Ghardaïa':['Berriane','Bounoura','Dhayet Bendhahoua','El Atteuf','Ghardaia','Guerrara','Hassi El Fehal','Hassi Fehal','Metlili','Mnea','Sebseb','Zelfana'],
+  'Relizane':['Ain El Hamam','Ain Rahma','Ain Tarek','Ammi Moussa','Belaasel Bouzegza','Beni Dergoun','Beni Zentis','Dar Ben Abdellah','Djidioua','El Guettar','El Hassi','El Matmar','El Ouldja','Hamri','Kalaa','Lahlef','Laktabia','Mazouna','Mediouna','Mendes','Oued El Djemaa','Oued Rhiou','Ouled Saber','Oued El Djemaa','Ramka','Sidi Khettab','Sidi Lazreg','Sidi M\'Hamed Ben Aouda','Sidi M\'Hamed Ben Ali','Souk El Had','Yellel','Zemmora'],
+  'Timimoun':['Aougrout','Charouine','Deldoul','Fenoughil','In Salah','Ksar Kaddour','Metarfa','Ouled Said','Ouled Normane','Timimoun','Tinerkouk'],
+  'Bordj Badji Mokhtar':['Bordj Badji Mokhtar','Timiaouine'],
+  'Ouled Djellal':['Ain Naga','Besbes','Doucen','Ouled Djellal','Ras El Miad','Sidi Khaled'],
+  'Béni Abbès':['Beni Abbes','Beni Ikhlef','El Ouata','Igli','Ksabi','Tabelbala','Timoudi'],
+  'In Salah':['Aoulef','Foggaret Ez Zoua','In Salah','Reggane'],
+  'In Guezzam':['Ain Guezzam','In Guezzam','Tin Zaouatine'],
+  'Touggourt':['El Allia','Megarine','Nezla','Tebesbest','Temacine','Touggourt','Zaouia El Abidia'],
+  'Djanet':['Bordj El Haouasse','Djanet','Iherir'],
+  'El M\'Ghair':['Djamaa','El Mghair','Hamraia','Oum Touyour','Reguiba','Still','Tendla'],
+  'El Meniaa':['El Meniaa','Hassi Gara','Issameur'],
+};
+const WILAYA_LIST = Object.keys(WILAYAS_COMMUNES);
+
 // ─── Status / Role colors ─────────────────────────────────────────────────────
 const STATUS_COLORS = {
   actif:    { bg: 'rgba(0,201,167,0.12)',  color: '#00C9A7', border: 'rgba(0,201,167,0.25)' },
@@ -28,9 +94,28 @@ const STATUS_COLORS = {
   suspendu: { bg: 'rgba(255,107,107,0.1)', color: '#FF6B6B', border: 'rgba(255,107,107,0.22)' },
 };
 const ROLE_COLORS = {
+  admin:      { bg: 'rgba(255,159,67,0.12)', color: '#FF9F43' },
   medecin:    { bg: 'rgba(74,108,247,0.1)',  color: '#4A6CF7' },
+  epidimio:   { bg: 'rgba(129,140,248,0.12)', color: '#818CF8' },
+  anapate:    { bg: 'rgba(168,85,247,0.12)', color: '#A855F7' },
+  pharmacie:  { bg: 'rgba(16,185,129,0.12)', color: '#10B981' },
   biologiste: { bg: 'rgba(0,201,167,0.12)',  color: '#00C9A7' },
 };
+const ROLE_LABELS = {
+  admin:     'Administrateur',
+  medecin:   'Médecin',
+  epidimio:  'Épidimio',
+  anapate:   'Anapath',
+  pharmacie: 'Pharmacie',
+  biologiste:'Biologiste',
+};
+const ROLE_OPTIONS = [
+  { value: 'admin', label: 'Administrateur' },
+  { value: 'medecin', label: 'Médecin' },
+  { value: 'epidimio', label: 'Épidimio' },
+  { value: 'anapate', label: 'Anapath' },
+  { value: 'pharmacie', label: 'Pharmacie' },
+];
 const ALL_PERMISSIONS = [
   { key: 'perm_read',   label: 'Lecture',      icon: '👁',  desc: 'Consulter les dossiers patients' },
   { key: 'perm_write',  label: 'Écriture',     icon: '✏',  desc: 'Créer / modifier des dossiers' },
@@ -48,7 +133,7 @@ function UserModal({ user, onClose, onSave }) {
       ? { ...user, password: '', password2: '' }
       : {
           nom: '', prenom: '', email: '', role: 'medecin',
-          specialite: '', wilaya: '', etablissement: '',
+          specialite: '', wilaya: '', commune: '', etablissement: '',
           statut: 'actif', telephone: '',
           perm_read: true, perm_write: false, perm_rcp: false,
           perm_lab: false, perm_stats: false, perm_import: false,
@@ -81,7 +166,7 @@ function UserModal({ user, onClose, onSave }) {
     setLoading(true);
     const payload = { ...form };
     delete payload.password2;
-    if (!payload.password) delete payload.password; // don't send empty password on edit
+    if (!payload.password) delete payload.password;
     try {
       await onSave(payload);
     } catch (err) {
@@ -100,7 +185,7 @@ function UserModal({ user, onClose, onSave }) {
       <div style={s.modal}>
         <div style={s.modalHeader}>
           <div style={s.modalTitle}>
-            <div style={s.modalIcon}>{isNew ? '➕' : '✏'}</div>
+          <div style={s.modalIcon}>{isNew ? '➕' : '✏'}</div>
             {isNew ? 'Créer un utilisateur' : `Modifier — ${user.prenom} ${user.nom}`}
           </div>
           <button style={s.modalClose} onClick={onClose}>✕</button>
@@ -176,8 +261,12 @@ function UserModal({ user, onClose, onSave }) {
               <div style={s.mfg}>
                 <label style={s.ml}>Rôle</label>
                 <select style={s.mi} value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
-                  <option value="medecin">Médecin</option>
-                  <option value="biologiste">Biologiste</option>
+                  {ROLE_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                  {form.role && !ROLE_OPTIONS.some(opt => opt.value === form.role) && (
+                    <option value={form.role}>Ancien rôle : {ROLE_LABELS[form.role] || form.role}</option>
+                  )}
                 </select>
               </div>
               <div style={s.mfg}>
@@ -189,9 +278,33 @@ function UserModal({ user, onClose, onSave }) {
             <div style={s.modalGrid2}>
               <div style={s.mfg}>
                 <label style={s.ml}>Wilaya</label>
-                <input style={s.mi} value={form.wilaya}
-                  onChange={e => setForm({ ...form, wilaya: e.target.value })} placeholder="Wilaya" />
+                <select
+                  style={s.mi}
+                  value={form.wilaya}
+                  onChange={e => setForm({ ...form, wilaya: e.target.value, commune: '' })}
+                >
+                  <option value="">— Sélectionner —</option>
+                  {WILAYA_LIST.map(w => (
+                    <option key={w} value={w}>{w}</option>
+                  ))}
+                </select>
               </div>
+              <div style={s.mfg}>
+                <label style={s.ml}>Commune</label>
+                <select
+                  style={{ ...s.mi, ...(!form.wilaya ? { color: '#aaa' } : {}) }}
+                  value={form.commune}
+                  onChange={e => setForm({ ...form, commune: e.target.value })}
+                  disabled={!form.wilaya}
+                >
+                  <option value="">— Sélectionner —</option>
+                  {(WILAYAS_COMMUNES[form.wilaya] || []).map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div style={s.modalGrid2}>
               <div style={s.mfg}>
                 <label style={s.ml}>Établissement</label>
                 <input style={s.mi} value={form.etablissement}
@@ -303,7 +416,7 @@ function UsersPage({ search }) {
   };
 
   const filtered = users.filter(u =>
-    `${u.prenom} ${u.nom} ${u.email} ${u.role} ${u.wilaya} ${u.etablissement}`
+    `${u.prenom} ${u.nom} ${u.email} ${u.role} ${u.wilaya} ${u.commune} ${u.etablissement}`
       .toLowerCase().includes(search.toLowerCase())
   );
 
@@ -365,13 +478,15 @@ function UsersPage({ search }) {
                   </td>
                   <td style={s.td}>
                     <span style={{ ...s.roleChip, ...ROLE_COLORS[u.role] }}>
-                      {u.role === 'medecin' ? 'Médecin' : 'Biologiste'}
+                      {ROLE_LABELS[u.role] || u.role}
                     </span>
                   </td>
                   <td style={s.td}><span style={{ fontSize: 13, color: '#4A5568' }}>{u.specialite || '—'}</span></td>
                   <td style={s.td}>
                     <div style={{ fontSize: 12, color: '#4A6CF7', fontWeight: 700 }}>{u.etablissement || '—'}</div>
-                    <div style={{ fontSize: 11, color: '#7A8BAD' }}>{u.wilaya || '—'}</div>
+                    <div style={{ fontSize: 11, color: '#7A8BAD' }}>
+                      {[u.wilaya, u.commune].filter(Boolean).join(' › ') || '—'}
+                    </div>
                   </td>
                   <td style={s.td}>
                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
@@ -509,7 +624,7 @@ function OverviewPage({ usersCount, logsCount, setPage }) {
     <>
       <div style={s.statsGrid}>
         {[
-          { label: 'Mes utilisateurs', value: String(usersCount), delta: 'médecins & biologistes', icon: '👥', color: '#4A6CF7' },
+          { label: 'Mes utilisateurs', value: String(usersCount), delta: 'comptes utilisateurs', icon: '👥', color: '#4A6CF7' },
           { label: 'Activités enregistrées', value: String(logsCount), delta: 'dans le journal', icon: '📋', color: '#00C9A7' },
           { label: 'Statut système', value: 'En ligne', delta: 'Backend connecté', icon: '✅', color: '#9B59B6' },
         ].map(({ label, value, delta, icon, color }) => (
@@ -529,7 +644,7 @@ function OverviewPage({ usersCount, logsCount, setPage }) {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 16, marginBottom: 32 }}>
         {[
-          { id: 'users', icon: '👤', label: 'Gérer mes utilisateurs', sub: 'Créer des comptes médecins & biologistes', color: 'linear-gradient(135deg,#4A6CF7,#6B87FF)' },
+          { id: 'users', icon: '👤', label: 'Gérer mes utilisateurs', sub: 'Créer des comptes utilisateurs', color: 'linear-gradient(135deg,#4A6CF7,#6B87FF)' },
           { id: 'logs',  icon: '📋', label: 'Journal d\'activité',     sub: 'Connexions & actions des utilisateurs',  color: 'linear-gradient(135deg,#9B59B6,#8e44ad)' },
         ].map(({ id, icon, label, sub, color }) => (
           <div key={id} style={s.quickCard} onClick={() => setPage(id)}>
@@ -547,7 +662,7 @@ function OverviewPage({ usersCount, logsCount, setPage }) {
           Comment ça marche ?
         </div>
         <div style={{ fontSize: 13, color: '#7A8BAD', lineHeight: 1.6 }}>
-          1. Créez un compte pour chaque médecin ou biologiste via <strong>« Gérer mes utilisateurs »</strong><br />
+          1. Créez un compte pour chaque utilisateur via <strong>« Gérer mes utilisateurs »</strong><br />
           2. Définissez un <strong>email</strong> et un <strong>mot de passe</strong> sécurisé<br />
           3. Assignez les <strong>permissions</strong> adaptées à leur rôle<br />
           4. L'utilisateur peut maintenant se connecter avec ses identifiants
@@ -565,7 +680,6 @@ export default function AdminDashboard() {
   const [usersCount, setUsersCount] = useState(0);
   const [logsCount, setLogsCount] = useState(0);
 
-  // Load counts for overview
   useEffect(() => {
     apiFetch('/users/').then(d => setUsersCount((Array.isArray(d) ? d : d.results || []).length)).catch(() => {});
     apiFetch('/logs/').then(d => setLogsCount((Array.isArray(d) ? d : d.results || []).length)).catch(() => {});
@@ -575,6 +689,7 @@ export default function AdminDashboard() {
     { id: 'overview', icon: '🏠', label: 'Vue d\'ensemble' },
     { id: 'users',    icon: '👤', label: 'Mes utilisateurs' },
     { id: 'logs',     icon: '📋', label: 'Journal' },
+    { id: 'fields',   icon: '🎛️', label: 'Champs personnalisés' },
     { id: 'statistics',  icon: '📊', label: 'Statistiques' },
   ];
 
@@ -634,15 +749,16 @@ export default function AdminDashboard() {
         <div style={s.topbar}>
           <div>
             <div style={s.topbarTitle}>
-              {page === 'overview' && 'Tableau de bord Admin'}
-              {page === 'users'    && 'Gestion des utilisateurs'}
-              {page === 'logs'     && 'Journal d\'activité'}
-              {page === 'statistics' && 'Statistiques'}
-            </div>
+  {page === 'overview'    && 'Tableau de bord Admin'}
+  {page === 'users'       && 'Gestion des utilisateurs'}
+  {page === 'logs'        && 'Journal d\'activité'}
+  {page === 'fields'      && 'Champs personnalisés'}
+  {page === 'statistics'  && 'Statistiques'}
+</div>
             <div style={s.topbarSub}>Registre National du Cancer — Panel Administrateur</div>
           </div>
           <div style={s.topbarRight}>
-            {page !== 'overview' && (
+            {(page === 'users' || page === 'logs') && (
               <div style={s.searchWrap}>
                 <span style={s.searchIcon}>🔍</span>
                 <input style={s.searchInput} type="text"
@@ -657,6 +773,7 @@ export default function AdminDashboard() {
         {page === 'overview' && <OverviewPage usersCount={usersCount} logsCount={logsCount} setPage={setPage} />}
         {page === 'users'    && <UsersPage search={search} />}
         {page === 'logs'     && <LogsPage search={search} />}
+        {page === 'fields'   && <CustomFieldsPage search={search} />}
         {page === 'statistics' && <StatisticsEditor />}
       </div>
     </div>
@@ -754,3 +871,4 @@ const s = {
   btnGhost: { padding: '11px 24px', borderRadius: 30, border: '1.5px solid #DDE4F3', background: '#F5F8FF', color: '#7A8BAD', fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: "'Nunito', sans-serif", transition: '0.2s' },
   toast: { position: 'fixed', bottom: 24, right: 24, color: '#fff', padding: '14px 24px', borderRadius: 14, fontSize: 14, fontWeight: 800, boxShadow: '0 10px 30px rgba(0,0,0,0.2)', zIndex: 2000, fontFamily: "'Nunito', sans-serif", maxWidth: 400 },
 };
+
