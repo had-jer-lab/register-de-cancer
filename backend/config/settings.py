@@ -149,3 +149,19 @@ ALLOWED_HOSTS = [
 ]
 AUTH_USER_MODEL = 'accounts.User'
 
+# Auto create superuser
+import os
+if os.environ.get('SUPERUSER_EMAIL'):
+    from django.db.models.signals import post_migrate
+    from django.dispatch import receiver
+    
+    @receiver(post_migrate)
+    def create_superuser(sender, **kwargs):
+        if sender.name == 'accounts':
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            email = os.environ.get('SUPERUSER_EMAIL')
+            password = os.environ.get('SUPERUSER_PASSWORD')
+            if email and not User.objects.filter(email=email).exists():
+                User.objects.create_superuser(email=email, password=password, nom='Admin', prenom='Super')
+                print(f'Superuser {email} created!')
